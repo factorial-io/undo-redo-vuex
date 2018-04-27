@@ -48,11 +48,30 @@ export default (options = {}) => store => {
   const redo = namespace => {
     const config = getConfig(namespace);
     if (Object.keys(config).length) {
-      const { undone, done } = config;
+      let { undone } = config;
+
       const commit = undone.pop();
+      const { actionGroup } = commit.payload;
+      const commits = [
+        commit,
+        ...(actionGroup
+          ? undone.filter(
+              m =>
+                m.payload.actionGroup && m.payload.actionGroup === actionGroup,
+            )
+          : []),
+      ];
+      undone = actionGroup
+        ? undone.filter(
+            m =>
+              !m.payload.actionGroup ||
+              (m.payload.actionGroup && m.payload.actionGroup !== actionGroup),
+          )
+        : [...undone];
+
       config.newMutation = false;
-      store.commit(`${commit.type}`, { ...commit.payload });
-      done.push(commit);
+      commits.forEach(c => store.commit(`${c.type}`, { ...c.payload }));
+      config.done = [...config.done, ...commits];
       config.newMutation = true;
     }
   };
@@ -75,16 +94,37 @@ export default (options = {}) => store => {
     const config = getConfig(namespace);
 
     if (Object.keys(config).length) {
-      const { undone, done } = config;
-      const lastDone = done.pop();
+      let { undone, done } = config;
+
+      const commit = done.pop();
+      const { payload, actionGroup } = commit;
+      const commits = [
+        commit,
+        ...(actionGroup
+          ? undone.filter(
+              m =>
+                !m.payload.actionGroup ||
+                (m.payload.actionGroup &&
+                  m.payload.actionGroup !== actionGroup),
+            )
+          : []),
+      ];
+      done = [
+        ...done,
+        ...(actionGroup
+          ? done.filter(
+              m =>
+                m.payload.actionGroup && m.payload.actionGroup === actionGroup,
+            )
+          : []),
+      ];
 
       // Check if there is an undo callback action
-      const { payload } = lastDone;
       const { undoCallback, redoCallback } = payload;
       if (undoCallback) store.dispatch(`${namespace}${undoCallback}`, payload);
       if (redoCallback) store.dispatch(`${namespace}${redoCallback}`, payload);
 
-      undone.push(lastDone);
+      undone = [...undone, ...commits];
       config.newMutation = false;
       store.commit(`${namespace}${EMPTY_STATE}`);
       done.forEach(mutation => {
