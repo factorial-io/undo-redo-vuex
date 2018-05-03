@@ -70,7 +70,14 @@ export default (options = {}) => store => {
         : [...undone];
 
       config.newMutation = false;
-      commits.forEach(c => store.commit(`${c.type}`, { ...c.payload }));
+      commits.forEach(({ type, payload }) =>
+        store.commit(
+          type,
+          payload.constuctor === Array
+            ? [...payload]
+            : payload.constructor(payload),
+        ),
+      );
       config.done = [...config.done, ...commits];
       config.newMutation = true;
     }
@@ -128,7 +135,12 @@ export default (options = {}) => store => {
       config.newMutation = false;
       store.commit(`${namespace}${EMPTY_STATE}`);
       done.forEach(mutation => {
-        store.commit(`${mutation.type}`, { ...mutation.payload });
+        store.commit(
+          mutation.type,
+          mutation.payload.constuctor === Array
+            ? [...mutation.payload]
+            : mutation.payload.constructor(mutation.payload),
+        );
         done.unshift();
       });
       config.newMutation = true;
