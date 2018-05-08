@@ -45,7 +45,7 @@ export default (options = {}) => store => {
    * @module store/plugins/undoRedo:redo
    * @function
    */
-  const redo = namespace => {
+  const redo = async namespace => {
     const config = getConfig(namespace);
     if (Object.keys(config).length) {
       let { undone } = config;
@@ -70,14 +70,19 @@ export default (options = {}) => store => {
         : [...undone];
 
       config.newMutation = false;
-      commits.forEach(({ type, payload }) =>
+      commits.forEach(async ({ type, payload }) => {
         store.commit(
           type,
           payload.constuctor === Array
             ? [...payload]
             : payload.constructor(payload),
-        ),
-      );
+        );
+
+        // Check if there is an redo callback action
+        const { redoCallback } = payload;
+        if (redoCallback)
+          await store.dispatch(`${namespace}${redoCallback}`, payload);
+      });
       config.done = [...config.done, ...commits];
       config.newMutation = true;
     }
@@ -97,14 +102,14 @@ export default (options = {}) => store => {
    * @module store/plugins/undoRedo:undo
    * @function
    */
-  const undo = namespace => {
+  const undo = async namespace => {
     const config = getConfig(namespace);
 
     if (Object.keys(config).length) {
       let { undone, done } = config;
 
       const commit = done.pop();
-      const { payload, actionGroup } = commit;
+      const { actionGroup } = commit;
       const commits = [
         commit,
         ...(actionGroup
@@ -126,15 +131,10 @@ export default (options = {}) => store => {
           : []),
       ];
 
-      // Check if there is an undo callback action
-      const { undoCallback, redoCallback } = payload;
-      if (undoCallback) store.dispatch(`${namespace}${undoCallback}`, payload);
-      if (redoCallback) store.dispatch(`${namespace}${redoCallback}`, payload);
-
       undone = [...undone, ...commits];
       config.newMutation = false;
       store.commit(`${namespace}${EMPTY_STATE}`);
-      done.forEach(mutation => {
+      done.forEach(async mutation => {
         store.commit(
           mutation.type,
           mutation.payload.constuctor === Array
@@ -142,6 +142,11 @@ export default (options = {}) => store => {
             : mutation.payload.constructor(mutation.payload),
         );
         done.unshift();
+
+        // Check if there is an undo callback action
+        const { undoCallback } = mutation.payload;
+        if (undoCallback)
+          await store.dispatch(`${namespace}${undoCallback}`, mutation.payload);
       });
       config.newMutation = true;
     }
