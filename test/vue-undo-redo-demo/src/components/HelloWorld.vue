@@ -55,21 +55,24 @@
 
 <script>
 export default {
-  name: 'HelloWorld',
+  name: "HelloWorld",
   props: {
-    msg: String,
-  },
+    msg: {
+      type: String,
+      default: ""
+    }
+  }
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 h3 {
-  margin: 40px 0 0;
+  margin: 40px 0.5 0;
 }
 ul {
-  list-style-type: none;
   padding: 0;
+  list-style-type: none;
 }
 li {
   display: inline-block;
