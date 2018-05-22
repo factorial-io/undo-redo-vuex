@@ -24,6 +24,25 @@ export default (options = {}) => store => {
     newMutation: true,
   };
 
+  // Based on https://gist.github.com/anvk/5602ec398e4fdc521e2bf9940fd90f84
+  /**
+   * Piping async action calls secquentially using Array.prototype.reduce
+   * to chain and initial, empty promise
+   *
+   * @module store/plugins/undoRedo:pipeActions
+   * @function
+   * @param {Array<Object>} actions - The array of objects containing the each
+   * action's name and payload
+   */
+  const pipeActions = actions =>
+    actions
+      .filter(({ action }) => !!action)
+      .reduce(
+        (promise, { action, payload }) =>
+          promise.then(() => store.dispatch(action, payload)),
+        Promise.resolve(),
+      );
+
   // const namespace = options.namespace ? `${options.namespace}/` : '';
   const paths = options.paths
     ? options.paths.map(({ namespace, ignoreMutations }) => ({
@@ -70,7 +89,7 @@ export default (options = {}) => store => {
         : [...undone];
 
       config.newMutation = false;
-      commits.forEach(async ({ type, payload }) => {
+      const redoCallbacks = commits.map(async ({ type, payload }) => {
         store.commit(
           type,
           payload.constuctor === Array
@@ -80,9 +99,12 @@ export default (options = {}) => store => {
 
         // Check if there is an redo callback action
         const { redoCallback } = payload;
-        if (redoCallback)
-          await store.dispatch(`${namespace}${redoCallback}`, payload);
+        return {
+          action: redoCallback ? `${namespace}${redoCallback}` : '',
+          payload,
+        };
       });
+      await pipeActions(redoCallbacks);
       config.done = [...config.done, ...commits];
       config.newMutation = true;
     }
@@ -109,6 +131,7 @@ export default (options = {}) => store => {
       let { undone, done } = config;
 
       const commit = done.pop();
+
       const { actionGroup } = commit;
       const commits = [
         commit,
@@ -121,6 +144,16 @@ export default (options = {}) => store => {
             )
           : []),
       ];
+
+      // Check if there are any undo callback actions
+      const undoCallbacks = commits.map(({ payload }) => ({
+        action: payload.undoCallback
+          ? `${namespace}${payload.undoCallback}`
+          : '',
+        payload,
+      }));
+      await pipeActions(undoCallbacks);
+
       done = [
         ...done,
         ...(actionGroup
@@ -134,20 +167,22 @@ export default (options = {}) => store => {
       undone = [...undone, ...commits];
       config.newMutation = false;
       store.commit(`${namespace}${EMPTY_STATE}`);
-      done.forEach(async mutation => {
+      const redoCallbacks = done.map(async mutation => {
         store.commit(
           mutation.type,
           mutation.payload.constuctor === Array
             ? [...mutation.payload]
             : mutation.payload.constructor(mutation.payload),
         );
-        done.unshift();
 
         // Check if there is an undo callback action
-        const { undoCallback } = mutation.payload;
-        if (undoCallback)
-          await store.dispatch(`${namespace}${undoCallback}`, mutation.payload);
+        const { redoCallback } = mutation.payload;
+        return {
+          action: redoCallback ? `${namespace}${redoCallback}` : '',
+          payload: mutation.payload,
+        };
       });
+      await pipeActions(redoCallbacks);
       config.newMutation = true;
     }
   };
@@ -181,15 +216,15 @@ export default (options = {}) => store => {
     }
   });
 
-  store.subscribeAction(action => {
+  store.subscribeAction(async action => {
     const namespace = `${action.type.split('/')[0]}/`;
 
     switch (action.type) {
       case `${namespace}/${REDO}`:
-        if (canRedo(namespace)) redo(namespace);
+        if (canRedo(namespace)) await redo(namespace);
         break;
       case `${namespace}${UNDO}`:
-        if (canUndo(namespace)) undo(namespace);
+        if (canUndo(namespace)) await undo(namespace);
         break;
       default:
         break;
