@@ -37,6 +37,7 @@
     "prettier-stylelint": "^0.4.2",
     "stylelint": "^9.2.0",
     "stylelint-config-prettier": "^3.2.0",
+    "stylelint-processor-html": "^1.0.0",
     "stylelint-selector-bem-pattern": "^2.0.0",
     "stylelint-suitcss": "^3.0.0",
     "vue-template-compiler": "^2.5.13"
