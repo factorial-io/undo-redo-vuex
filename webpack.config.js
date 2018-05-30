@@ -6,7 +6,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname + '/dist/'),
     filename: 'undo-redo-vuex.min.js',
-    libraryTarget: 'window',
+    libraryTarget: 'commonjs2',
     library: 'UndoRedoVuex',
   },
   module: {

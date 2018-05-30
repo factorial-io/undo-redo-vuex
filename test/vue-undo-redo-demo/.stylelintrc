@@ -1,0 +1,18 @@
+{
+  "extends": [
+  "stylelint-suitcss",
+  "prettier-stylelint"
+  ],
+  "processors": [
+    "@mapbox/stylelint-processor-arbitrary-tags"
+  ],
+  "plugins": [
+    "stylelint-selector-bem-pattern",
+  ],
+  "rules": {
+    "plugin/selector-bem-pattern": {
+      "preset": "suit"
+    },
+    "string-quotes": "double"
+  }
+}

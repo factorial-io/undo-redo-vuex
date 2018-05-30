@@ -1,0 +1,67 @@
+{
+  "name": "vue-undo-redo-demo",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "lint:css": "stylelint src/**/*.vue --syntax scss --fix",
+    "stylelint-check": "stylelint-config-prettier-check"
+  },
+  "dependencies": {
+    "vue": "^2.5.16"
+  },
+  "devDependencies": {
+    "@mapbox/stylelint-processor-arbitrary-tags": "^0.2.0",
+    "@vue/cli-plugin-babel": "^3.0.0-beta.9",
+    "@vue/cli-plugin-eslint": "^3.0.0-beta.9",
+    "@vue/cli-service": "^3.0.0-beta.9",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.2.3",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-env-2": "^1.5.2",
+    "babel-register": "^6.26.0",
+    "babel-runtime": "^6.26.0",
+    "browser-env": "^3.2.5",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-friendly-formatter": "^4.0.1",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-plugin-vue": "^4.4.0",
+    "prettier": "^1.12.1",
+    "prettier-stylelint": "^0.4.2",
+    "stylelint": "^9.2.0",
+    "stylelint-config-prettier": "^3.2.0",
+    "stylelint-processor-html": "^1.0.0",
+    "stylelint-selector-bem-pattern": "^2.0.0",
+    "stylelint-suitcss": "^3.0.0",
+    "vue-template-compiler": "^2.5.13"
+  },
+  "babel": {
+    "presets": [
+      "@vue/app"
+    ]
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ]
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
+}
