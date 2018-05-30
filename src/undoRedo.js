@@ -43,7 +43,6 @@ export default (options = {}) => store => {
         Promise.resolve(),
       );
 
-  // const namespace = options.namespace ? `${options.namespace}/` : '';
   const paths = options.paths
     ? options.paths.map(({ namespace, ignoreMutations }) => ({
         ...pathConfig,
@@ -54,8 +53,31 @@ export default (options = {}) => store => {
       }))
     : [{ ...pathConfig }];
 
+  /**
+   * Piping async action calls secquentially using Array.prototype.reduce
+   * to chain and initial, empty promise
+   *
+   * @module store/plugins/undoRedo:getConfig
+   * @function
+   * @param {String} namespace - The name of the store module
+   * @returns {Object} config - The object containing the undo/redo stacks of the store module
+   */
   const getConfig = namespace =>
     paths.find(path => path.namespace === namespace) || {};
+
+  /**
+   * Piping async action calls secquentially using Array.prototype.reduce
+   * to chain and initial, empty promise
+   *
+   * @module store/plugins/undoRedo:setConfig
+   * @function
+   * @param {String} namespace - The name of the store module
+   * @param {String} config - The object containing the updated undo/redo stacks of the store module
+   */
+  const setConfig = (namespace, config) => {
+    const pathIndex = paths.findIndex(path => path.namespace === namespace);
+    paths.splice(pathIndex, 1, config);
+  };
 
   /**
    * The Redo function - commits the latest undone mutation to the store,
@@ -70,16 +92,24 @@ export default (options = {}) => store => {
       let { undone } = config;
 
       const commit = undone.pop();
+      // NB: Arbitrary name to identify mutations which have been grouped in a single action
       const { actionGroup } = commit.payload;
       const commits = [
         commit,
         ...(actionGroup
           ? undone.filter(
               m =>
-                m.payload.actionGroup && m.payload.actionGroup === actionGroup,
+                // NB: If the curren mutation is a grouped mutation, only commit
+                // it belongs to another group
+                (m.payload.actionGroup &&
+                  m.payload.actionGroup !== actionGroup) ||
+                // NB: Commit the mutation if it is not a grouped mutation
+                !m.payload.actionGroup,
             )
-          : []),
+          : undone),
       ];
+
+      // NB: The new redo stack to be updated in the config object
       undone = actionGroup
         ? undone.filter(
             m =>
@@ -89,7 +119,9 @@ export default (options = {}) => store => {
         : [...undone];
 
       config.newMutation = false;
+      // NB: The array of redoCallbacks and respective action payloads
       const redoCallbacks = commits.map(async ({ type, payload }) => {
+        // NB: Commit each mutation in the redo stack
         store.commit(
           type,
           payload.constuctor === Array
@@ -99,14 +131,19 @@ export default (options = {}) => store => {
 
         // Check if there is an redo callback action
         const { redoCallback } = payload;
+        // NB: The object containing the redoCallback action and payload
         return {
           action: redoCallback ? `${namespace}${redoCallback}` : '',
           payload,
         };
       });
-      await pipeActions(redoCallbacks);
+      await pipeActions(await Promise.all(redoCallbacks));
       config.done = [...config.done, ...commits];
       config.newMutation = true;
+      setConfig(namespace, {
+        ...config,
+        undone,
+      });
     }
   };
   const canRedo = namespace => {
@@ -132,11 +169,11 @@ export default (options = {}) => store => {
 
       const commit = done.pop();
 
-      const { actionGroup } = commit;
+      const { actionGroup } = commit.payload;
       const commits = [
         commit,
         ...(actionGroup
-          ? undone.filter(
+          ? done.filter(
               m =>
                 !m.payload.actionGroup ||
                 (m.payload.actionGroup &&
@@ -155,13 +192,14 @@ export default (options = {}) => store => {
       await pipeActions(undoCallbacks);
 
       done = [
-        ...done,
         ...(actionGroup
           ? done.filter(
               m =>
-                m.payload.actionGroup && m.payload.actionGroup === actionGroup,
+                (m.payload.actionGroup &&
+                  m.payload.actionGroup !== actionGroup) ||
+                !m.payload.actionGroup,
             )
-          : []),
+          : done),
       ];
 
       undone = [...undone, ...commits];
@@ -182,8 +220,13 @@ export default (options = {}) => store => {
           payload: mutation.payload,
         };
       });
-      await pipeActions(redoCallbacks);
+      await pipeActions(await Promise.all(redoCallbacks));
       config.newMutation = true;
+      setConfig(namespace, {
+        ...config,
+        done,
+        undone,
+      });
     }
   };
   const canUndo = () => namespace => {
@@ -216,11 +259,12 @@ export default (options = {}) => store => {
     }
   });
 
+  // NB: Watch all actions to intercept the undo/redo NOOP actions
   store.subscribeAction(async action => {
     const namespace = `${action.type.split('/')[0]}/`;
 
     switch (action.type) {
-      case `${namespace}/${REDO}`:
+      case `${namespace}${REDO}`:
         if (canRedo(namespace)) await redo(namespace);
         break;
       case `${namespace}${UNDO}`:
