@@ -12,8 +12,9 @@
     "babel": "inherit",
     "tap": true
   },
+  "main": "./dist/undo-redo-vuex.min.js",
   "name": "undo-redo-vuex",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A Vuex plugin for module namespaced undo and redo functionality.",
   "author": "Andrew Beng <andrewbeng89@gmail.com>",
   "license": "MIT",
@@ -40,6 +41,7 @@
     "eslint-plugin-prettier": "^2.6.0",
     "fast-deep-equal": "^2.0.1",
     "ignore-styles": "^5.0.1",
+    "jsdoc-to-markdown": "^4.0.1",
     "prettier": "^1.12.1",
     "require-extension-hooks": "^0.3.2",
     "require-extension-hooks-babel": "^0.1.1",
@@ -55,6 +57,7 @@
   },
   "scripts": {
     "build": "rimraf ./dist && webpack --optimize-minimize --config ./webpack.config.js",
-    "test": "ENV=test ava ./test/test.js"
+    "test": "ENV=test ava ./test/test.js",
+    "doc-to-markdown": "jsdoc2md ./src/undoRedo.js"
   }
 }
