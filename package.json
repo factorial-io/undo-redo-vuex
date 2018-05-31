@@ -12,8 +12,9 @@
     "babel": "inherit",
     "tap": true
   },
+  "main": "./dist/undo-redo-vuex.min.js",
   "name": "undo-redo-vuex",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A Vuex plugin for module namespaced undo and redo functionality.",
   "author": "Andrew Beng <andrewbeng89@gmail.com>",
   "license": "MIT",
