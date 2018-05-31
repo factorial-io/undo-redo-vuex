@@ -67,6 +67,16 @@ export default new Vuex.Store({
 });
 ```
 
+## Testing and test scenarios
+
+Development tests are run using the [Ava](https://github.com/avajs/ava) test runner. The `./test/store` directory contains a basic Vuex store with a namespaced `list` module.
+
+The tests in `./test/test.js` are executed serially to track the change in store state over time. 
+
+```js
+yarn test
+```
+
 ## API documentation and reference
 
 ### Functions
