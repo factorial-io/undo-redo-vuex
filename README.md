@@ -1,6 +1,6 @@
 # undo-redo-vuex
 
-A Vuex plugin for module namespaced undo and redo functionality. This plugin takes inspiration and extends the work of [vuex-undo-redo](https://github.com/anthonygore/vuex-undo-redo).
+A Vuex plugin for module namespaced undo and redo functionality. This plugin takes inspiration from and extends the work of [vuex-undo-redo](https://github.com/anthonygore/vuex-undo-redo).
 
 ## Installation
 
@@ -71,7 +71,7 @@ export default new Vuex.Store({
 
 Development tests are run using the [Ava](https://github.com/avajs/ava) test runner. The `./test/store` directory contains a basic Vuex store with a namespaced `list` module.
 
-The tests in `./test/test.js` are executed serially to track the change in store state over time. 
+The tests in `./test/test.js` are executed serially to track the change in store state over time.
 
 ```js
 yarn test
