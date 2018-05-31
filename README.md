@@ -102,7 +102,6 @@ stack by popping the done stack and &#39;replays&#39; all mutations in the done 
 ### store/plugins/undoRedo(options) ⇒ <code>function</code>
 The Undo-Redo plugin module
 
-**Kind**: global function  
 **Returns**: <code>function</code> - plugin - the plugin function which accepts the store parameter  
 
 | Param | Type | Description |
@@ -117,7 +116,6 @@ The Undo-Redo plugin module
 Piping async action calls sequentially using Array.prototype.reduce
 to chain and initial, empty promise
 
-**Kind**: global function  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -129,7 +127,6 @@ to chain and initial, empty promise
 Piping async action calls sequentially using Array.prototype.reduce
 to chain and initial, empty promise
 
-**Kind**: global function  
 **Returns**: <code>Object</code> - config - The object containing the undo/redo stacks of the store module  
 
 | Param | Type | Description |
@@ -142,7 +139,6 @@ to chain and initial, empty promise
 Piping async action calls sequentially using Array.prototype.reduce
 to chain and initial, empty promise
 
-**Kind**: global function  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -155,11 +151,8 @@ to chain and initial, empty promise
 The Redo function - commits the latest undone mutation to the store,
 and pushes it to the done stack
 
-**Kind**: global function  
 <a name="store/plugins/undoRedo_undo"></a>
 
 ### store/plugins/undoRedo:undo()
 The Undo function - pushes the latest done mutation to the top of the undone
 stack by popping the done stack and 'replays' all mutations in the done stack
-
-**Kind**: global function
