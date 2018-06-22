@@ -14,7 +14,7 @@ test.serial('Add item to list and undo', async t => {
   const expectedState = [{ ...item }];
 
   // Commit the item to the store and assert
-  await store.commit('addItem', { item });
+  store.commit('addItem', { item });
   t.deepEqual(Vue.plain(store.state.list), expectedState);
 
   // The undo function should remove the item
@@ -40,8 +40,8 @@ test.serial('Grouped mutations: adding two items to the list', async t => {
   const actionGroup = 'myAction';
 
   // Commit the items to the store and assert
-  await store.commit('addItem', { item, actionGroup });
-  await store.commit('addItem', { item: anotherItem, actionGroup });
+  store.commit('addItem', { item, actionGroup });
+  store.commit('addItem', { item: anotherItem, actionGroup });
   t.deepEqual(Vue.plain(store.state.list), expectedState);
 
   // The undo function should remove the item
@@ -50,6 +50,11 @@ test.serial('Grouped mutations: adding two items to the list', async t => {
 
 test.serial('Assert list items after undo: should contain 1 item', async t => {
   t.deepEqual(Vue.plain(store.state.list), [{ ...item }]);
+});
+
+test.serial('Redo once', async () => {
+  // Redo 'addItem'
+  await store.dispatch('redo');
 });
 
 test.serial('Redo "addItem" twice (grouped mutations)', async () => {
