@@ -111,7 +111,7 @@ export default (options = {}) => store => {
                 // NB: Commit the mutation if it is not a grouped mutation
                 !m.payload.actionGroup,
             )
-          : undone),
+          : []),
       ];
 
       // NB: The new redo stack to be updated in the config object
