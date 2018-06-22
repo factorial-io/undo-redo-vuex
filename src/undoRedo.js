@@ -243,7 +243,10 @@ export default (options = {}) => store => {
   };
 
   store.subscribe(mutation => {
-    const namespace = `${mutation.type.split('/')[0]}/`;
+    const isStoreNamespaced = mutation.type.split('/').length > 1;
+    const namespace = isStoreNamespaced
+      ? `${mutation.type.split('/')[0]}/`
+      : '';
     const config = getConfig(namespace);
 
     if (Object.keys(config).length) {
@@ -266,7 +269,8 @@ export default (options = {}) => store => {
 
   // NB: Watch all actions to intercept the undo/redo NOOP actions
   store.subscribeAction(async action => {
-    const namespace = `${action.type.split('/')[0]}/`;
+    const isStoreNamespaced = action.type.split('/').length > 1;
+    const namespace = isStoreNamespaced ? `${action.type.split('/')[0]}/` : '';
 
     switch (action.type) {
       case `${namespace}${REDO}`:
