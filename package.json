@@ -62,7 +62,7 @@
   },
   "scripts": {
     "build": "rimraf ./dist && webpack --optimize-minimize --config ./webpack.config.js",
-    "test": "ENV=test ava ./test/test.js ./test/test-non-namespaced.js",
+    "test": "ENV=test ava ./test/test.js ./test/test-non-namespaced.js ./test/test-multiple-undo.js",
     "doc-to-markdown": "jsdoc2md ./src/undoRedo.js"
   }
 }
