@@ -16,13 +16,13 @@ const UNDO = 'undo';
  * @returns {Function} plugin - the plugin function which accepts the store parameter
  */
 export default (options = {}) => store => {
-  const pathConfig = {
-    namespace: '',
-    ignoreMutations: [],
+  const createPathConfig = ({ namespace = '', ignoreMutations = [] }) => ({
+    namespace,
+    ignoreMutations,
     done: [],
     undone: [],
     newMutation: true,
-  };
+  });
 
   // Based on https://gist.github.com/anvk/5602ec398e4fdc521e2bf9940fd90f84
   /**
@@ -44,14 +44,19 @@ export default (options = {}) => store => {
       );
 
   const paths = options.paths
-    ? options.paths.map(({ namespace, ignoreMutations }) => ({
-        ...pathConfig,
-        namespace: `${namespace}/`,
-        ignoreMutations: ignoreMutations.map(
-          mutation => `${namespace}/${mutation}`,
-        ),
-      }))
-    : [{ ...pathConfig }];
+    ? options.paths.map(({ namespace, ignoreMutations }) =>
+        createPathConfig({
+          namespace: `${namespace}/`,
+          ignoreMutations: ignoreMutations.map(
+            mutation => `${namespace}/${mutation}`,
+          ),
+        }),
+      )
+    : [
+        createPathConfig({
+          ignoreMutations: options.ignoreMutations || [],
+        }),
+      ];
 
   /**
    * Piping async action calls secquentially using Array.prototype.reduce
@@ -238,7 +243,10 @@ export default (options = {}) => store => {
   };
 
   store.subscribe(mutation => {
-    const namespace = `${mutation.type.split('/')[0]}/`;
+    const isStoreNamespaced = mutation.type.split('/').length > 1;
+    const namespace = isStoreNamespaced
+      ? `${mutation.type.split('/')[0]}/`
+      : '';
     const config = getConfig(namespace);
 
     if (Object.keys(config).length) {
@@ -261,7 +269,8 @@ export default (options = {}) => store => {
 
   // NB: Watch all actions to intercept the undo/redo NOOP actions
   store.subscribeAction(async action => {
-    const namespace = `${action.type.split('/')[0]}/`;
+    const isStoreNamespaced = action.type.split('/').length > 1;
+    const namespace = isStoreNamespaced ? `${action.type.split('/')[0]}/` : '';
 
     switch (action.type) {
       case `${namespace}${REDO}`:
