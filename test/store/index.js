@@ -1,7 +1,7 @@
 import Vuex from 'vuex';
 import Vue from 'vue';
 import list from './modules/list';
-import undoRedo from '../../';
+import undoRedo from '../../src/undoRedo';
 
 Vue.use(Vuex);
 

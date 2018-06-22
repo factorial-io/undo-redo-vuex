@@ -14,7 +14,7 @@
   },
   "main": "./dist/undo-redo-vuex.min.js",
   "name": "undo-redo-vuex",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A Vuex plugin for module namespaced undo and redo functionality.",
   "author": "Andrew Beng <andrewbeng89@gmail.com>",
   "license": "MIT",
@@ -57,7 +57,7 @@
   },
   "scripts": {
     "build": "rimraf ./dist && webpack --optimize-minimize --config ./webpack.config.js",
-    "test": "ENV=test ava ./test/test.js",
+    "test": "ENV=test ava ./test/test.js ./test/test-non-namespaced.js",
     "doc-to-markdown": "jsdoc2md ./src/undoRedo.js"
   }
 }
