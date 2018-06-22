@@ -55,6 +55,11 @@
     "webpack-cli": "^2.1.3",
     "webpack-merge": "^4.1.2"
   },
+  "keywords": ["vuex", "vue", "undo/redo"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andrewbeng89/undo-redo-vuex.git"
+  },
   "scripts": {
     "build": "rimraf ./dist && webpack --optimize-minimize --config ./webpack.config.js",
     "test": "ENV=test ava ./test/test.js ./test/test-non-namespaced.js",
