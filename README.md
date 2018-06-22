@@ -24,7 +24,7 @@ import undoRedo from 'undo-redo-vuex';
 
 As a standard [plugin for Vuex](https://vuex.vuejs.org/guide/plugins.html), `undo-redo-vuex` can be used with the following setup:
 
-### Named store module
+### Named or basic store module
 
 ```js
 export default {
@@ -38,16 +38,20 @@ export default {
     undo() {},
     redo() {}
   },
-  namespaced: true
+  namespaced: true // NB: do not include this is non-namespaced stores
 }
 ```
 
 ### store/index.js
 
+- Namespaced modules
+
 ```js
 import Vuex from 'vuex';
 import undoRedo from 'undo-redo-vuex';
 
+// NB: The following config is used for namespaced store modules.
+// Please see below for configuring a non-namespaced (basic) vuex store
 export default new Vuex.Store({
   plugins: [
     undoRedo({
@@ -64,6 +68,26 @@ export default new Vuex.Store({
   modules: {
     list,
   }
+});
+```
+
+- Non-namespaced (basic) vuex store
+
+```js
+import Vuex from 'vuex';
+import undoRedo from 'undo-redo-vuex';
+
+export default new Vuex.Store({
+  state,
+  getters,
+  actions,
+  mutations,
+  plugins: [
+    undoRedo({
+      // NB: Include 'ignoreMutations' at root level, and do not provide the list of 'paths'.
+      ignoreMutations: ['addShadow', 'removeShadow'],
+    }),
+  ],
 });
 ```
 
