@@ -234,7 +234,7 @@ export default (options = {}) => store => {
       });
     }
   };
-  const canUndo = () => namespace => {
+  const canUndo = namespace => {
     const config = getConfig(namespace);
     if (config) {
       return config.done.length > 0;
