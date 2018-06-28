@@ -1,10 +1,15 @@
 /* eslint-disable no-param-reassign, no-shadow */
 import deepEqual from 'fast-deep-equal';
+import {
+  scaffoldState,
+  scaffoldActions,
+  scaffoldMutations,
+} from '../../../src/undoRedo';
 
-const state = {
+const state = scaffoldState({
   list: [],
   shadow: [],
-};
+});
 
 const getters = {
   getList: ({ list }) => list,
@@ -12,10 +17,7 @@ const getters = {
   getShadow: ({ shadow }) => shadow,
 };
 
-const actions = {
-  // NB: NOOP actions for undo/redo mechanism
-  undo() {},
-  redo() {},
+const actions = scaffoldActions({
   // NB: add/remove shadow actions to test undo/redo callback actions
   addShadow({ commit }, { item }) {
     commit('addShadow', { item });
@@ -23,9 +25,9 @@ const actions = {
   removeShadow({ commit }, { index }) {
     commit('removeShadow', { index });
   },
-};
+});
 
-const mutations = {
+const mutations = scaffoldMutations({
   emptyState: state => {
     state.list = [];
   },
@@ -44,7 +46,7 @@ const mutations = {
   removeShadow: (state, { index }) => {
     state.shadow.splice(index, 1);
   },
-};
+});
 
 export default {
   state,
