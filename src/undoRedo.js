@@ -55,14 +55,17 @@ export default (options = {}) => store => {
     ? options.paths.map(({ namespace, ignoreMutations }) =>
         createPathConfig({
           namespace: `${namespace}/`,
-          ignoreMutations: ignoreMutations.map(
-            mutation => `${namespace}/${mutation}`,
-          ),
+          ignoreMutations: ignoreMutations
+            .map(mutation => `${namespace}/${mutation}`)
+            .concat(`${namespace}/${UPDATE_CAN_UNDO_REO}`),
         }),
       )
     : [
         createPathConfig({
-          ignoreMutations: options.ignoreMutations || [],
+          ignoreMutations: [
+            ...(options.ignoreMutations || []),
+            UPDATE_CAN_UNDO_REO,
+          ],
         }),
       ];
 
