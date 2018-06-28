@@ -17,6 +17,12 @@ export const scaffoldState = state => ({
   canRedo: false,
 });
 
+export const scaffoldActions = actions => ({
+  ...actions,
+  undo,
+  redo,
+});
+
 export const scaffoldMutations = mutations => ({
   ...mutations,
   updateCanUndoRedo: (state, payload) => {
