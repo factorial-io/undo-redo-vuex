@@ -16,16 +16,23 @@ test.serial('Add item to list and undo', async t => {
   // Commit the item to the store and assert
   store.commit('list/addItem', { item });
   t.deepEqual(Vue.plain(store.state.list.list), expectedState);
-
-  // The undo function should remove the item
-  await store.dispatch('list/undo');
 });
 
-test.serial('Assert list items after undo', async t => {
+test.serial(
+  'Check "canUndo" value; The undo function should remove the item',
+  async t => {
+    t.is(Vue.plain(store.state.list.canUndo), true);
+    await store.dispatch('list/undo');
+  },
+);
+
+test.serial('Check "canUndo" value, Assert list items after undo', async t => {
+  t.is(Vue.plain(store.state.list.canUndo), false);
   t.deepEqual(Vue.plain(store.state.list.list), []);
 });
 
-test.serial('Redo "addItem" commit', async () => {
+test.serial('Redo "addItem" commit', async t => {
+  t.is(Vue.plain(store.state.list.canRedo), true);
   await store.dispatch('list/redo');
 });
 
