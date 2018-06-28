@@ -12,6 +12,8 @@ const debug = process.env.NODE_ENV !== 'production';
 const state = {
   list: [],
   shadow: [],
+  canUndo: false,
+  canRedo: false,
 };
 
 const getters = {
@@ -52,12 +54,16 @@ const mutations = {
   removeShadow: (state, { index }) => {
     state.shadow.splice(index, 1);
   },
+  updateCanUndoRedo: (state, payload) => {
+    if (payload.canUndo !== undefined) state.canUndo = payload.canUndo;
+    if (payload.canRedo !== undefined) state.canRedo = payload.canRedo;
+  },
 };
 
 export default new Vuex.Store({
   plugins: [
     undoRedo({
-      ignoreMutations: ['addShadow', 'removeShadow'],
+      ignoreMutations: ['addShadow', 'removeShadow', 'updateCanUndoRedo'],
     }),
   ],
   state,
