@@ -1,8 +1,29 @@
+/* eslint-disable no-param-reassign, no-shadow */
+
 // Logic based on: https://github.com/anthonygore/vuex-undo-redo
 
 const EMPTY_STATE = 'emptyState';
+const UPDATE_CAN_UNDO_REO = 'updateCanUndoRedo';
 const REDO = 'redo';
 const UNDO = 'undo';
+
+const noop = () => {};
+export const undo = noop;
+export const redo = noop;
+
+export const scaffoldState = state => ({
+  ...state,
+  canUndo: false,
+  canRedo: false,
+});
+
+export const scaffoldMutations = mutations => ({
+  ...mutations,
+  updateCanUndoRedo: (state, payload) => {
+    if (payload.canUndo !== undefined) state.canUndo = payload.canUndo;
+    if (payload.canRedo !== undefined) state.canRedo = payload.canRedo;
+  },
+});
 
 /**
  * The Undo-Redo plugin module
@@ -23,25 +44,6 @@ export default (options = {}) => store => {
     undone: [],
     newMutation: true,
   });
-
-  // Based on https://gist.github.com/anvk/5602ec398e4fdc521e2bf9940fd90f84
-  /**
-   * Piping async action calls secquentially using Array.prototype.reduce
-   * to chain and initial, empty promise
-   *
-   * @module store/plugins/undoRedo:pipeActions
-   * @function
-   * @param {Array<Object>} actions - The array of objects containing the each
-   * action's name and payload
-   */
-  const pipeActions = actions =>
-    actions
-      .filter(({ action }) => !!action)
-      .reduce(
-        (promise, { action, payload }) =>
-          promise.then(() => store.dispatch(action, payload)),
-        Promise.resolve(),
-      );
 
   const paths = options.paths
     ? options.paths.map(({ namespace, ignoreMutations }) =>
@@ -69,6 +71,53 @@ export default (options = {}) => store => {
    */
   const getConfig = namespace =>
     paths.find(path => path.namespace === namespace) || {};
+
+  const canRedo = namespace => {
+    const config = getConfig(namespace);
+    if (Object.keys(config).length) {
+      return config.undone.length > 0;
+    }
+    return false;
+  };
+
+  const canUndo = namespace => {
+    const config = getConfig(namespace);
+    if (config) {
+      return config.done.length > 0;
+    }
+    return false;
+  };
+
+  const updateCanUndoRedo = namespace => {
+    const undoEnabled = canUndo(namespace);
+    const redoEnabled = canRedo(namespace);
+
+    store.commit(`${namespace}${UPDATE_CAN_UNDO_REO}`, {
+      canUndo: undoEnabled,
+    });
+    store.commit(`${namespace}${UPDATE_CAN_UNDO_REO}`, {
+      canRedo: redoEnabled,
+    });
+  };
+
+  // Based on https://gist.github.com/anvk/5602ec398e4fdc521e2bf9940fd90f84
+  /**
+   * Piping async action calls secquentially using Array.prototype.reduce
+   * to chain and initial, empty promise
+   *
+   * @module store/plugins/undoRedo:pipeActions
+   * @function
+   * @param {Array<Object>} actions - The array of objects containing the each
+   * action's name and payload
+   */
+  const pipeActions = actions =>
+    actions
+      .filter(({ action }) => !!action)
+      .reduce(
+        (promise, { action, payload }) =>
+          promise.then(() => store.dispatch(action, payload)),
+        Promise.resolve(),
+      );
 
   /**
    * Piping async action calls secquentially using Array.prototype.reduce
@@ -149,14 +198,9 @@ export default (options = {}) => store => {
         ...config,
         undone,
       });
+
+      updateCanUndoRedo(namespace);
     }
-  };
-  const canRedo = namespace => {
-    const config = getConfig(namespace);
-    if (Object.keys(config).length) {
-      return config.undone.length > 0;
-    }
-    return false;
   };
 
   /**
@@ -232,14 +276,9 @@ export default (options = {}) => store => {
         done,
         undone,
       });
+
+      updateCanUndoRedo(namespace);
     }
-  };
-  const canUndo = namespace => {
-    const config = getConfig(namespace);
-    if (config) {
-      return config.done.length > 0;
-    }
-    return false;
   };
 
   store.subscribe(mutation => {
@@ -254,15 +293,17 @@ export default (options = {}) => store => {
 
       if (
         mutation.type !== `${namespace}${EMPTY_STATE}` &&
+        mutation.type !== `${namespace}${UPDATE_CAN_UNDO_REO}` &&
         ignoreMutations.indexOf(mutation.type) === -1 &&
         mutation.type.includes(namespace) &&
         newMutation
       ) {
         done.push(mutation);
-      }
-
-      if (newMutation && mutation.type.includes(namespace)) {
-        config.undone = [];
+        setConfig(namespace, {
+          ...config,
+          done,
+        });
+        updateCanUndoRedo(namespace);
       }
     }
   });
