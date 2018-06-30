@@ -3,20 +3,16 @@
 import Vuex from 'vuex';
 import Vue from 'vue';
 import deepEqual from 'fast-deep-equal';
-import undoRedo, {
-  scaffoldState,
-  scaffoldActions,
-  scaffoldMutations,
-} from '../../src/undoRedo';
+import undoRedo, { scaffoldStore } from '../../src/undoRedo';
 
 Vue.use(Vuex);
 
 const debug = process.env.NODE_ENV !== 'production';
 
-const state = scaffoldState({
+const state = {
   list: [],
   shadow: [],
-});
+};
 
 const getters = {
   getList: ({ list }) => list,
@@ -24,7 +20,7 @@ const getters = {
   getShadow: ({ shadow }) => shadow,
 };
 
-const actions = scaffoldActions({
+const actions = {
   // NB: add/remove shadow actions to test undo/redo callback actions
   addShadow({ commit }, { item }) {
     commit('addShadow', { item });
@@ -32,9 +28,9 @@ const actions = scaffoldActions({
   removeShadow({ commit }, { index }) {
     commit('removeShadow', { index });
   },
-});
+};
 
-const mutations = scaffoldMutations({
+const mutations = {
   emptyState: state => {
     state.list = [];
   },
@@ -53,7 +49,7 @@ const mutations = scaffoldMutations({
   removeShadow: (state, { index }) => {
     state.shadow.splice(index, 1);
   },
-});
+};
 
 export default new Vuex.Store({
   plugins: [
@@ -61,9 +57,11 @@ export default new Vuex.Store({
       ignoreMutations: ['addShadow', 'removeShadow'],
     }),
   ],
-  state,
-  getters,
-  actions,
-  mutations,
+  ...scaffoldStore({
+    state,
+    getters,
+    actions,
+    mutations,
+  }),
   strict: debug,
 });
