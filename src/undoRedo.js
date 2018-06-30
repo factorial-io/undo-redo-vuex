@@ -31,6 +31,13 @@ export const scaffoldMutations = mutations => ({
   },
 });
 
+export const scaffoldStore = store => ({
+  ...store,
+  state: scaffoldState(store.state || {}),
+  actions: scaffoldActions(store.actions || {}),
+  mutations: scaffoldMutations(store.mutations || {}),
+});
+
 /**
  * The Undo-Redo plugin module
  *
