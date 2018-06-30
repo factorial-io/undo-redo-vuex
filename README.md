@@ -26,7 +26,30 @@ As a standard [plugin for Vuex](https://vuex.vuejs.org/guide/plugins.html), `und
 
 ### Named or basic store module
 
-The `scaffoldState`, `scaffoldActions`, and `scaffoldMutations` helper functions are required to bootstrap a vuex store to be used with this plugin. This will expose `canUndo` and `canRedo` as vuex state properties which can be used to enable/disable UI controls (e.g. undo/redo buttons).
+The `scaffoldStore` helper function will bootstrap a vuex store to setup the `state`, `actions` and `mutations` to work with the plugin.
+
+```js
+import { scaffoldStore } from 'undo-redo-vuex';
+
+const state = {
+  // Define vuex state properties as normal
+};
+const actions = {
+  // Define vuex actions as normal
+};
+const mutations = {
+  // Define vuex mutations as normal
+}
+
+export default scaffoldStore({
+  state,
+  actions,
+  mutations,
+  namespaced: true // NB: do not include this is non-namespaced stores
+});
+```
+
+Alternatively, the `scaffoldState`, `scaffoldActions`, and `scaffoldMutations` helper functions can be individually required to bootstrap the vuex store. This will expose `canUndo` and `canRedo` as vuex state properties which can be used to enable/disable UI controls (e.g. undo/redo buttons).
 
 ```js
 import {
