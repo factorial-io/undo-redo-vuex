@@ -194,9 +194,7 @@ export default (options = {}) => store => {
         // NB: Commit each mutation in the redo stack
         store.commit(
           type,
-          payload.constuctor === Array
-            ? [...payload]
-            : payload.constructor(payload),
+          Array.isArray(payload) ? [...payload] : payload.constructor(payload),
         );
 
         // Check if there is an redo callback action
@@ -273,7 +271,7 @@ export default (options = {}) => store => {
       const redoCallbacks = done.map(async mutation => {
         store.commit(
           mutation.type,
-          mutation.payload.constuctor === Array
+          Array.isArray(mutation.payload)
             ? [...mutation.payload]
             : mutation.payload.constructor(mutation.payload),
         );
