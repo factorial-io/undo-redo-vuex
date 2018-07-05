@@ -133,6 +133,23 @@ export default new Vuex.Store({
 });
 ```
 
+### Accessing `canUndo` and `canRedo` properties
+
+- Vue SFC (.vue)
+
+```js
+import { mapState } from 'vuex';
+
+const MyComponent = {
+  computed: {
+    ...mapState({
+      undoButtonEnabled: 'canUndo',
+      redoButtonEnabled: 'canRedo',
+    }),
+  }
+}
+```
+
 ## Testing and test scenarios
 
 Development tests are run using the [Ava](https://github.com/avajs/ava) test runner. The `./test/store` directory contains a basic Vuex store with a namespaced `list` module.
