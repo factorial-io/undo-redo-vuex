@@ -165,19 +165,18 @@ export default (options = {}) => store => {
       // NB: Arbitrary name to identify mutations which have been grouped in a single action
       const { actionGroup } = commit.payload;
       const commits = [
-        commit,
         ...(actionGroup
           ? undone.filter(
               m =>
-                // NB: If the curren mutation is a grouped mutation, only commit
-                // it belongs to another group
-                (m.payload.actionGroup &&
-                  m.payload.actionGroup !== actionGroup) ||
-                // NB: Commit the mutation if it is not a grouped mutation
-                !m.payload.actionGroup,
+                // NB: If the current mutation is a grouped mutation, also undo
+                // those that belong to the same group
+                m.payload.actionGroup && m.payload.actionGroup === actionGroup,
             )
           : []),
+        commit,
       ];
+
+      commits.reverse();
 
       // NB: The new redo stack to be updated in the config object
       undone = actionGroup
@@ -186,7 +185,7 @@ export default (options = {}) => store => {
               !m.payload.actionGroup ||
               (m.payload.actionGroup && m.payload.actionGroup !== actionGroup),
           )
-        : [...undone];
+        : undone;
 
       config.newMutation = false;
       // NB: The array of redoCallbacks and respective action payloads
@@ -229,21 +228,20 @@ export default (options = {}) => store => {
 
     if (Object.keys(config).length) {
       let { undone, done } = config;
-
       const commit = done.pop();
 
       const { actionGroup } = commit.payload;
       const commits = [
-        commit,
         ...(actionGroup
           ? done.filter(
               m =>
-                !m.payload.actionGroup ||
-                (m.payload.actionGroup &&
-                  m.payload.actionGroup !== actionGroup),
+                m.payload.actionGroup && m.payload.actionGroup === actionGroup,
             )
           : []),
+        commit,
       ];
+
+      commits.reverse();
 
       // Check if there are any undo callback actions
       const undoCallbacks = commits.map(({ payload }) => ({
