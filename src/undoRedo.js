@@ -169,10 +169,9 @@ export default (options = {}) => store => {
         ...(actionGroup
           ? undone.filter(
               m =>
-                // NB: If the curren mutation is a grouped mutation, only commit
-                // it belongs to another group
+                // Commit the mutation if it belongs to the same action group
                 (m.payload.actionGroup &&
-                  m.payload.actionGroup !== actionGroup) ||
+                  m.payload.actionGroup === actionGroup) ||
                 // NB: Commit the mutation if it is not a grouped mutation
                 !m.payload.actionGroup,
             )
@@ -238,9 +237,7 @@ export default (options = {}) => store => {
         ...(actionGroup
           ? done.filter(
               m =>
-                !m.payload.actionGroup ||
-                (m.payload.actionGroup &&
-                  m.payload.actionGroup !== actionGroup),
+                m.payload.actionGroup && m.payload.actionGroup === actionGroup,
             )
           : []),
       ];
