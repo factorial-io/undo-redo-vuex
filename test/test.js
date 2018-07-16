@@ -10,7 +10,8 @@ const item = {
   foo: 'bar',
 };
 
-test.serial('Add item to list and undo', async t => {
+// done: [addItem] undone: []
+test.serial('Add item to list', async t => {
   const expectedState = [{ ...item }];
 
   // Commit the item to the store and assert
@@ -26,11 +27,13 @@ test.serial(
   },
 );
 
+// done: [] undone: [addItem]
 test.serial('Check "canUndo" value, Assert list items after undo', async t => {
   t.is(Vue.plain(store.state.list.canUndo), false);
   t.deepEqual(Vue.plain(store.state.list.list), []);
 });
 
+// done: [addItem] undone: []
 test.serial('Redo "addItem" commit', async t => {
   t.is(Vue.plain(store.state.list.canRedo), true);
   await store.dispatch('list/redo');
@@ -41,6 +44,7 @@ test.serial('Assert list items after redo', async t => {
   t.deepEqual(Vue.plain(store.state.list.list), Vue.plain(expectedState));
 });
 
+// done: [addItem, {addItem, addItem}] undone: []
 test.serial('Grouped mutations: adding two items to the list', async t => {
   const anotherItem = { foo: 'baz' };
   const expectedState = [{ ...item }, { ...item }, { ...anotherItem }];
@@ -50,7 +54,10 @@ test.serial('Grouped mutations: adding two items to the list', async t => {
   store.commit('list/addItem', { item, actionGroup });
   store.commit('list/addItem', { item: anotherItem, actionGroup });
   t.deepEqual(Vue.plain(store.state.list.list), expectedState);
+});
 
+// done: [addItem] undone: [{addItem, addItem}]
+test.serial('Dispatch undo', async () => {
   // The undo function should remove the item
   await store.dispatch('list/undo');
 });
@@ -59,11 +66,7 @@ test.serial('Assert list items after undo: should contain 1 item', async t => {
   t.deepEqual(Vue.plain(store.state.list.list), [{ ...item }]);
 });
 
-test.serial('Redo once', async () => {
-  // Redo 'addItem'
-  await store.dispatch('list/redo');
-});
-
+// done: [addItem, {addItem, addItem}] undone: []
 test.serial('Redo "addItem" twice (grouped mutations)', async () => {
   // Redo 'addItem'
   await store.dispatch('list/redo');
@@ -79,7 +82,6 @@ test.serial('Assert list items after redo: should contain 3 items', async t => {
 test.serial('"addShadow" action should be dispatched on undo', async t => {
   const expectedState = [...Vue.plain(store.state.list.list), item];
 
-  // Redo 'addItem'
   store.commit('list/addItem', {
     index: 0,
     item,
