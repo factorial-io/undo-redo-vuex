@@ -190,7 +190,7 @@ export default (options = {}) => store => {
 
       config.newMutation = false;
       // NB: The array of redoCallbacks and respective action payloads
-      const redoCallbacks = commits.map(async ({ type, payload }) => {
+      const redoCallbacks = commits.map(({ type, payload }) => {
         // NB: Commit each mutation in the redo stack
         store.commit(
           type,
@@ -205,7 +205,7 @@ export default (options = {}) => store => {
           payload,
         };
       });
-      await pipeActions(await Promise.all(redoCallbacks));
+      await pipeActions(redoCallbacks);
       config.done = [...config.done, ...commits];
       config.newMutation = true;
       setConfig(namespace, {
@@ -268,7 +268,7 @@ export default (options = {}) => store => {
       undone = [...undone, ...commits];
       config.newMutation = false;
       store.commit(`${namespace}${EMPTY_STATE}`);
-      const redoCallbacks = done.map(async mutation => {
+      const redoCallbacks = done.map(mutation => {
         store.commit(
           mutation.type,
           Array.isArray(mutation.payload)
@@ -283,7 +283,7 @@ export default (options = {}) => store => {
           payload: mutation.payload,
         };
       });
-      await pipeActions(await Promise.all(redoCallbacks));
+      await pipeActions(redoCallbacks);
       config.newMutation = true;
       setConfig(namespace, {
         ...config,
