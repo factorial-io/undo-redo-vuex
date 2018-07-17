@@ -66,8 +66,9 @@
   },
   "scripts": {
     "build": "rimraf ./dist && webpack --optimize-minimize --config ./webpack.config.js",
-    "test": "ENV=test ava ./test/test.js ./test/test-non-namespaced.js ./test/test-multiple-undo.js ./test/test-action-group-undo.js",
+    "test": "ENV=test ava ./test/test.js ./test/test-non-namespaced.js ./test/test-multiple-undo.js ./test/test-action-group-undo.js ./test/test-advance-action-groups.js",
     "test:actionGroup": "ENV=test ava ./test/test-action-group-undo.js",
+    "test:advanceActionGroups": "ENV=test ava ./test/test-advance-action-groups.js",
     "test:basic": "ENV=test ava ./test/test.js",
     "test:nonNamespaced": "ENV=test ava ./test/test-non-namespaced.js",
     "test:multipleUndo": "ENV=test ava ./test/test-multiple-undo.js",
