@@ -230,13 +230,13 @@ export default (options = {}) => store => {
 
       const { actionGroup } = commit.payload;
       const commits = [
-        commit,
         ...(actionGroup
           ? done.filter(
               m =>
                 m.payload.actionGroup && m.payload.actionGroup === actionGroup,
             )
           : []),
+        commit,
       ];
 
       // Check if there are any undo callback actions
