@@ -165,17 +165,14 @@ export default (options = {}) => store => {
       // NB: Arbitrary name to identify mutations which have been grouped in a single action
       const { actionGroup } = commit.payload;
       const commits = [
-        commit,
         ...(actionGroup
           ? undone.filter(
               m =>
                 // Commit the mutation if it belongs to the same action group
-                (m.payload.actionGroup &&
-                  m.payload.actionGroup === actionGroup) ||
-                // NB: Commit the mutation if it is not a grouped mutation
-                !m.payload.actionGroup,
+                m.payload.actionGroup && m.payload.actionGroup === actionGroup,
             )
           : []),
+        commit,
       ];
 
       // NB: The new redo stack to be updated in the config object
