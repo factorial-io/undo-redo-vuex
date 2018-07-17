@@ -10,17 +10,21 @@ const item = {
   foo: 'bar',
 };
 
+const other = {
+  cool: 'idea',
+};
+
 // done: [addItem, {addItem, addItem}, {addItem}] undone: []
 test.serial('Add 4 items to list', async () => {
   // Commit the items with action groups to the store and assert
   store.commit('addItem', { item });
   store.commit('addItem', { item, actionGroup: 'firstGroup' });
-  store.commit('addItem', { item, actionGroup: 'firstGroup' });
+  store.commit('addItem', { item: other, actionGroup: 'firstGroup' });
   store.commit('addItem', { item, actionGroup: 'secondGroup' });
 });
 
 test.serial('Assert items: should contain 4 items', async t => {
-  const expectedState = [{ ...item }, { ...item }, { ...item }, { ...item }];
+  const expectedState = [{ ...item }, { ...item }, { ...other }, { ...item }];
   t.deepEqual(Vue.plain(store.state.list), expectedState);
 });
 
@@ -33,7 +37,7 @@ test.serial('Assert items: should contain 3 items', async t => {
   t.deepEqual(Vue.plain(store.state.list), [
     { ...item },
     { ...item },
-    { ...item },
+    { ...other },
   ]);
 });
 
@@ -55,7 +59,7 @@ test.serial('Assert items: should contain 3 items', async t => {
   t.deepEqual(Vue.plain(store.state.list), [
     { ...item },
     { ...item },
-    { ...item },
+    { ...other },
   ]);
 });
 
@@ -68,7 +72,7 @@ test.serial('Assert items: should contain 4 items', async t => {
   t.deepEqual(Vue.plain(store.state.list), [
     { ...item },
     { ...item },
-    { ...item },
+    { ...other },
     { ...item },
   ]);
 });
