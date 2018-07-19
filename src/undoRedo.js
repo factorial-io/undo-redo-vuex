@@ -159,30 +159,42 @@ export default (options = {}) => store => {
   const redo = async namespace => {
     const config = getConfig(namespace);
     if (Object.keys(config).length) {
-      let { undone } = config;
+      /**
+       * @var {Array} undone - The updated undone stack
+       * @var {Array} commits - The list of mutations to be redone
+       * NB: The reduceRight operation is used to identify the mutation(s) from the
+       * top of the undone stack to be redone
+       */
+      const { undone, commits } = config.undone.reduceRight(
+        ({ commits, undone, proceed }, m) => {
+          if (!commits.length) {
+            // The "topmost" mutation
+            commits = [m];
+            // Do not find more mutations if the mutations does not belong to a group
+            proceed = !!m.payload.actionGroup;
+          } else if (!proceed) {
+            // The mutation(s) to redo have been identified
+            undone = [m, ...undone];
+          } else {
+            // Find mutations belonging to the same actionGroup
+            const lastCommit = commits[commits.length - 1];
+            const { actionGroup } = lastCommit.payload;
+            // Stop finding more mutations if the current mutation belongs to
+            // another actionGroup, or does not have an actionGroup
+            proceed =
+              m.payload.actionGroup && m.payload.actionGroup === actionGroup;
+            commits = [...(proceed ? [m] : []), ...commits];
+            undone = [...(proceed ? [] : [m]), ...undone];
+          }
 
-      const commit = undone.pop();
-      // NB: Arbitrary name to identify mutations which have been grouped in a single action
-      const { actionGroup } = commit.payload;
-      const commits = [
-        ...(actionGroup
-          ? undone.filter(
-              m =>
-                // Commit the mutation if it belongs to the same action group
-                m.payload.actionGroup && m.payload.actionGroup === actionGroup,
-            )
-          : []),
-        commit,
-      ];
-
-      // NB: The new redo stack to be updated in the config object
-      undone = actionGroup
-        ? undone.filter(
-            m =>
-              !m.payload.actionGroup ||
-              (m.payload.actionGroup && m.payload.actionGroup !== actionGroup),
-          )
-        : [...undone];
+          return { commits, undone, proceed };
+        },
+        {
+          commits: [],
+          undone: [],
+          proceed: true,
+        },
+      );
 
       config.newMutation = false;
       // NB: The array of redoCallbacks and respective action payloads
@@ -224,20 +236,41 @@ export default (options = {}) => store => {
     const config = getConfig(namespace);
 
     if (Object.keys(config).length) {
-      let { undone, done } = config;
+      /**
+       * @var {Array} done - The updated done stack
+       * @var {Array} commits - The list of mutations which are undone
+       * NB: The reduceRight operation is used to identify the mutation(s) from the
+       * top of the done stack to be undone
+       */
+      const { done, commits } = config.done.reduceRight(
+        ({ done, commits, proceed }, m) => {
+          if (!commits.length) {
+            // The "topmost" mutation from the done stack
+            commits = [m];
+            // Do not find more mutations if the mutations does not belong to a group
+            proceed = !!m.payload.actionGroup;
+          } else if (!proceed) {
+            // Unshift the mutation to the done stack
+            done = [m, ...done];
+          } else {
+            const lastUndone = commits[commits.length - 1];
+            const { actionGroup } = lastUndone.payload;
+            // Unshift to commits if mutation belongs to the same actionGroup,
+            // otherwise unshift to the done stack
+            proceed =
+              m.payload.actionGroup && m.payload.actionGroup === actionGroup;
+            commits = [...(proceed ? [m] : []), ...commits];
+            done = [...(proceed ? [] : [m]), ...done];
+          }
 
-      const commit = done.pop();
-
-      const { actionGroup } = commit.payload;
-      const commits = [
-        ...(actionGroup
-          ? done.filter(
-              m =>
-                m.payload.actionGroup && m.payload.actionGroup === actionGroup,
-            )
-          : []),
-        commit,
-      ];
+          return { done, commits, proceed };
+        },
+        {
+          done: [],
+          commits: [],
+          proceed: true,
+        },
+      );
 
       // Check if there are any undo callback actions
       const undoCallbacks = commits.map(({ payload }) => ({
@@ -248,18 +281,7 @@ export default (options = {}) => store => {
       }));
       await pipeActions(undoCallbacks);
 
-      done = [
-        ...(actionGroup
-          ? done.filter(
-              m =>
-                (m.payload.actionGroup &&
-                  m.payload.actionGroup !== actionGroup) ||
-                !m.payload.actionGroup,
-            )
-          : done),
-      ];
-
-      undone = [...undone, ...commits];
+      const undone = [...config.undone, ...commits];
       config.newMutation = false;
       store.commit(`${namespace}${EMPTY_STATE}`);
       const redoCallbacks = done.map(async mutation => {

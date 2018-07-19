@@ -76,3 +76,34 @@ test.serial('Assert items: should contain 4 items', async t => {
     { ...item },
   ]);
 });
+
+// done: [addItem, {addItem, addItem}, {addItem}, {addItem, addItem}] undone: []
+test.serial('Repeat action: "firstGroup"', () => {
+  store.commit('addItem', { item, actionGroup: 'firstGroup' });
+  store.commit('addItem', { item: other, actionGroup: 'firstGroup' });
+});
+
+test.serial('Assert items: should contain 6 items', async t => {
+  t.deepEqual(Vue.plain(store.state.list), [
+    { ...item },
+    { ...item },
+    { ...other },
+    { ...item },
+    { ...item },
+    { ...other },
+  ]);
+});
+
+// done: [addItem, {addItem, addItem}, {addItem}] undone: [{addItem, addItem}]
+test.serial('Undo firstGroup', async () => {
+  await store.dispatch('undo');
+});
+
+test.serial('Assert items: should contain 6 items', async t => {
+  t.deepEqual(Vue.plain(store.state.list), [
+    { ...item },
+    { ...item },
+    { ...other },
+    { ...item },
+  ]);
+});
