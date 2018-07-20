@@ -150,6 +150,49 @@ const MyComponent = {
 }
 ```
 
+### Undoing actions with `actionGroups`
+
+In certain scenarios, undo/redo is required on store actions which may consist of one or more mutations. This feature is accessible by including a `actionGroup` property in the `payload` object of the associated vuex action. Please refer to `test/test-action-group-undo.js` for more comprehensive scenarios.
+
+- vuex module
+
+```js
+const actions = {
+  myAction({ commit }, payload) {
+    // An arbitrary label to identify the group of mutations to undo/redo
+    const actionGroup = 'myAction';
+
+    // All mutation payloads should contain the actionGroup property
+    commit('mutationA', {
+      ...payload,
+      actionGroup,
+    });
+    commit('mutationB', {
+      someProp: true,
+      actionGroup,
+    });
+  },
+};
+```
+
+- Undo/redo stack illustration
+
+```js
+// After dispatching 'myAction' once
+done = [
+  { type: 'mutationA', payload: { ...payload, actionGroup: 'myAction' } },
+  { type: 'mutationB', payload: { someProp: true, actionGroup: 'myAction' } },
+];
+undone = [];
+
+// After dispatching 'undo'
+done = [];
+undone = [
+  { type: 'mutationA', payload: { ...payload, actionGroup: 'myAction' } },
+  { type: 'mutationB', payload: { someProp: true, actionGroup: 'myAction' } },
+];
+```
+
 ## Testing and test scenarios
 
 Development tests are run using the [Ava](https://github.com/avajs/ava) test runner. The `./test/store` directory contains a basic Vuex store with a namespaced `list` module.
