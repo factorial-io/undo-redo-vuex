@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --target lib --name undoRedo src/undoRedo.ts",
+    "build": "vue-cli-service build --target lib --name undo-redo-vuex src/undoRedo.ts",
     "lint": "vue-cli-service lint",
     "test:unit": "vue-cli-service test:unit"
   },
@@ -39,5 +39,15 @@
       "vue-cli-service lint",
       "git add"
     ]
-  }
+  },
+  "keywords": [
+    "vuex",
+    "vue",
+    "undo/redo"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andrewbeng89/undo-redo-vuex.git"
+  },
+  "main": "./dist/undo-redo-vuex.umd.min.js"
 }
