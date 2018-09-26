@@ -1,39 +1,40 @@
 /* eslint-disable no-param-reassign, no-shadow */
-import deepEqual from 'fast-deep-equal';
-import { scaffoldStore } from '../../../src/undoRedo';
+import deepEqual from "fast-deep-equal";
+import { scaffoldStore } from "../../../src/undoRedo";
 
 const state = {
   list: [],
-  shadow: [],
+  shadow: []
 };
 
 const getters = {
   getList: ({ list }: { list: Array<any> }) => list,
-  getItem: (state: any) => ({ item }: { item: any }) => state.list.find((i: any) => deepEqual(i, item)),
-  getShadow: ({ shadow }: { shadow: Array<any> }) => shadow,
+  getItem: (state: any) => ({ item }: { item: any }) =>
+    state.list.find((i: any) => deepEqual(i, item)),
+  getShadow: ({ shadow }: { shadow: Array<any> }) => shadow
 };
 
 interface Context {
-  commit: Function,
-  state: any,
-  getters: any,
-  rootState: any,
-  rootGetters: any
+  commit: Function;
+  state: any;
+  getters: any;
+  rootState: any;
+  rootGetters: any;
 }
 
 interface Payload {
-  index?: number,
-  item?: any
+  index?: number;
+  item?: any;
 }
 
 const actions = {
   // NB: add/remove shadow actions to test undo/redo callback actions
   addShadow({ commit }: Context, { item }: Payload) {
-    commit('addShadow', { item });
+    commit("addShadow", { item });
   },
   removeShadow({ commit }: Context, { index }: Payload) {
-    commit('removeShadow', { index });
-  },
+    commit("removeShadow", { index });
+  }
 };
 
 export const mutations = {
@@ -54,7 +55,7 @@ export const mutations = {
   },
   removeShadow: (state: any, { index }: Payload) => {
     state.shadow.splice(index, 1);
-  },
+  }
 };
 
 export default scaffoldStore({
@@ -62,5 +63,5 @@ export default scaffoldStore({
   getters,
   actions,
   mutations,
-  namespaced: true,
+  namespaced: true
 });

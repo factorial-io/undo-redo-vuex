@@ -10,21 +10,21 @@ Vue.use(Vuex);
 const debug = process.env.NODE_ENV !== "production";
 
 interface State {
-  list: Array<any>,
-  shadow: Array<any>
+  list: Array<any>;
+  shadow: Array<any>;
 }
 
 interface Payload {
-  index: number,
-  item?: any
+  index: number;
+  item?: any;
 }
 
 interface Context {
-  commit: Function,
-  state: any,
-  getters: any,
-  rootState: any,
-  rootGetters: any
+  commit: Function;
+  state: any;
+  getters: any;
+  rootState: any;
+  rootGetters: any;
 }
 
 const state: State = {
@@ -34,7 +34,8 @@ const state: State = {
 
 const getters = {
   getList: ({ list }: State) => list,
-  getItem: (state: State) => ({ item }: Payload) => state.list.find(i => deepEqual(i, item)),
+  getItem: (state: State) => ({ item }: Payload) =>
+    state.list.find(i => deepEqual(i, item)),
   getShadow: ({ shadow }: State) => shadow
 };
 
