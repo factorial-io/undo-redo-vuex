@@ -3,50 +3,68 @@
 import Vuex from "vuex";
 import Vue from "vue";
 import deepEqual from "fast-deep-equal";
-import undoRedo, { scaffoldStore } from "../../src/undoRedo";
+import undoRedo, { scaffoldStore } from "@/undoRedo";
 
 Vue.use(Vuex);
 
 const debug = process.env.NODE_ENV !== "production";
 
-const state = {
+interface State {
+  list: Array<any>,
+  shadow: Array<any>
+}
+
+interface Payload {
+  index: number,
+  item?: any
+}
+
+interface Context {
+  commit: Function,
+  state: any,
+  getters: any,
+  rootState: any,
+  rootGetters: any
+}
+
+const state: State = {
   list: [],
   shadow: []
 };
 
 const getters = {
-  getList: ({ list }) => list,
-  getItem: state => ({ item }) => state.list.find(i => deepEqual(i, item)),
-  getShadow: ({ shadow }) => shadow
+  getList: ({ list }: State) => list,
+  getItem: (state: State) => ({ item }: Payload) => state.list.find(i => deepEqual(i, item)),
+  getShadow: ({ shadow }: State) => shadow
 };
 
 const actions = {
   // NB: add/remove shadow actions to test undo/redo callback actions
-  addShadow({ commit }, { item }) {
+  addShadow({ commit }: Context, { item }: Payload) {
     commit("addShadow", { item });
   },
-  removeShadow({ commit }, { index }) {
+  removeShadow({ commit }: Context, { index }: Payload) {
     commit("removeShadow", { index });
   }
 };
 
 const mutations = {
-  emptyState: state => {
+  emptyState: (state: State) => {
     state.list = [];
   },
-  addItem: (state, { item }) => {
+  addItem: (state: State, { item }: Payload) => {
     state.list = [...state.list, item];
   },
-  updateItem: (state, { item, index }) => {
+  updateItem: (state: State, { item, index }: Payload) => {
     state.list.splice(index, 1, item);
   },
-  removeItem: (state, { index }) => {
+  removeItem: (state: State, { index }: Payload) => {
     state.list.splice(index, 1);
   },
-  addShadow: (state, { item }) => {
+  addShadow: (state: State, { item }: Payload) => {
     state.shadow = [...state.shadow, item];
   },
-  removeShadow: (state, { index }) => {
+  removeShadow: (state: State, { index }: Payload) => {
     state.shadow.splice(index, 1);
   }
 };
