@@ -7,7 +7,7 @@ Vue.use(Vuex);
 
 const debug = process.env.NODE_ENV !== "production";
 
-export default new Vuex.Store({
+export const store = {
   plugins: [
     undoRedo({
       paths: [
@@ -22,4 +22,8 @@ export default new Vuex.Store({
     list
   },
   strict: debug
+};
+
+export default new Vuex.Store({
+  ...store
 });
