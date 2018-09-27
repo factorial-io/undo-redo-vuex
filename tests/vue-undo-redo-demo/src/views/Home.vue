@@ -3,9 +3,9 @@
     <img alt="Vue logo" src="../assets/logo.png">
     <input type="text" @keyup.enter.prevent="postNewTodo" v-model="newTodo" />
     <button @click.prevent="postNewTodo">Add</button>
-    <button :disabled="!canUndo" @click.prevent="undo">Undo</button>
-    <button :disabled="!canRedo" @click.prevent="redo">Redo</button>
-    <h4>My Todos</h4>
+    <button id="undo" :disabled="!canUndo" @click.prevent="undo">Undo</button>
+    <button id="redo" :disabled="!canRedo" @click.prevent="redo">Redo</button>
+    <h4>{{ header }}</h4>
     <ol>
       <li v-for="(todo, i) in list" :key="i">
         {{ todo }}
@@ -21,7 +21,10 @@ import Vue from "vue";
 export default Vue.extend({
   name: "home",
   computed: {
-    ...mapState("list", ["list", "canUndo", "canRedo"])
+    ...mapState("list", ["list", "canUndo", "canRedo"]),
+    header() {
+      return this.list.length ? "My Todos" : "You don't have any Todos yet"
+    }
   },
   data() {
     return {
