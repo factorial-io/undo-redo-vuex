@@ -22,7 +22,7 @@ export default Vue.extend({
   name: "home",
   computed: {
     ...mapState("list", ["list", "canUndo", "canRedo"]),
-    header() {
+    header(): string {
       return this.list.length ? "My Todos" : "You don't have any Todos yet"
     }
   },
