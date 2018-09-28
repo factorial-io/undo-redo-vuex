@@ -1,4 +1,6 @@
 // https://docs.cypress.io/api/introduction/api.html
+// NB: https://github.com/vuejs/vuex/issues/1220 and https://github.com/vuejs/vuex/pull/1121
+// ERROR: Vuex/Typescript mappers issue: property does not exist on type 'CombinedVueInstance<Vue, ...>' 
 
 describe("My First Test", () => {
   it("Visits the app root url", () => {
