@@ -25,5 +25,6 @@ export const store = {
 };
 
 export default new Vuex.Store({
-  ...store
+  ...store,
+  strict: false
 });
