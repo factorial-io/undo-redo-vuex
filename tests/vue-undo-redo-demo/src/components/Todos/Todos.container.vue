@@ -25,14 +25,19 @@ export default Vue.extend({
     computed: {
         ...mapState("list", ["list", "canUndo", "canRedo"]),
         label(): string {
+            // @ts-ignore
             return this.list.length ? "My Todos" : "You don't have any Todos yet"
         },
-        todoData() {
+        todoData(): any {
             return {
+                // @ts-ignore
                 list: this.list,
+                // @ts-ignore
                 canUndo: this.canUndo,
+                // @ts-ignore
                 canRedo: this.canRedo,
                 label: this.label,
+                // @ts-ignore
                 newTodo: this.newTodo
             };
         }
@@ -46,6 +51,7 @@ export default Vue.extend({
         ...mapMutations("list", ["addItem"]),
         ...mapActions("list", ["undo", "redo"]),
         postNewTodo() {
+            // @ts-ignore
             this.addItem({ item: this.newTodo });
             this.newTodo = "";
         },
