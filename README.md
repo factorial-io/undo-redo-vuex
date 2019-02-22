@@ -152,13 +152,17 @@ const MyComponent = {
 
 ## Testing and test scenarios
 
-Development tests are run using the [Ava](https://github.com/avajs/ava) test runner. The `./test/store` directory contains a basic Vuex store with a namespaced `list` module.
+Development tests are run using the [Jest](https://jestjs.io/) test runner. The `./tests/store` directory contains a basic Vuex store with a namespaced `list` module.
 
-The tests in `./test/test.js` are executed serially to track the change in store state over time.
+The test blocks (each `it()` declaration) in `./tests/unit` directory are grouped to mimic certain user interactions with the store, making it possible to track the change in state over time.
 
 ```js
 yarn test
 ```
+
+## Demo Vue.js app in `tests/vue-undo-redo-demo`
+
+A demo Vue.js TODO application featuring this plugin is included in the `tests/vue-undo-redo-demo` directory. Example test specs for Vue.js unit testing with Jest, and E2E testing with Cypress are also provided.
 
 ## API documentation and reference
 
