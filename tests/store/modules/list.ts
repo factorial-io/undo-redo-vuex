@@ -2,6 +2,8 @@
 import deepEqual from "fast-deep-equal";
 import { scaffoldStore } from "../../../src/undoRedo";
 
+const debug = process.env.NODE_ENV !== "production";
+
 const state = {
   list: [],
   shadow: []
@@ -63,5 +65,6 @@ export default scaffoldStore({
   getters,
   actions,
   mutations,
-  namespaced: true
+  namespaced: true,
+  debug
 });

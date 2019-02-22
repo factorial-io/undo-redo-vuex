@@ -70,17 +70,17 @@ const mutations = {
   }
 };
 
-export default new Vuex.Store({
-  plugins: [
-    undoRedo({
-      ignoreMutations: ["addShadow", "removeShadow"]
-    })
-  ],
-  ...scaffoldStore({
+export default new Vuex.Store(
+  scaffoldStore({
+    plugins: [
+      undoRedo({
+        ignoreMutations: ["addShadow", "removeShadow"]
+      })
+    ],
+    strict: debug,
     state,
     getters,
     actions,
     mutations
-  }),
-  strict: debug
-});
+  })
+);
