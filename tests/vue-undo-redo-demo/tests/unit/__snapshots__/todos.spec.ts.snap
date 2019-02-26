@@ -1,8 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`renders correctly 1`] = `
+exports[`Todos.vue Should render correctly 1`] = `
 <div>
-  <button>
+  <button
+    id="post"
+  >
     Add
   </button>
    

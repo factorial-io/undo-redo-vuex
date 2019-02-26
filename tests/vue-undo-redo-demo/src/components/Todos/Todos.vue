@@ -1,6 +1,6 @@
 <template functional>
     <div>
-        <button @click="listeners.postNewTodo">Add</button>
+        <button id="post" @click="listeners.postNewTodo">Add</button>
         <button
             id="undo"
             :disabled="!props.canUndo"
