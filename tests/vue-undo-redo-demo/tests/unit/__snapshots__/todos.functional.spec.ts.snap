@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Todos.vue Should render correctly 1`] = `
+<div>
+  <button
+    id="post"
+  >
+    Add
+  </button>
+   
+  <button
+    disabled="disabled"
+    id="undo"
+  >
+    Undo
+  </button>
+   
+  <button
+    disabled="disabled"
+    id="redo"
+  >
+    Redo
+  </button>
+   
+  <h4>
+    You don't have any Todos yet
+  </h4>
+   
+  <ol />
+</div>
+`;

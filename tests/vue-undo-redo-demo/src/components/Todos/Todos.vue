@@ -1,28 +1,35 @@
-<template functional>
-    <div>
-        <button id="post" @click="listeners.postNewTodo">Add</button>
-        <button
-            id="undo"
-            :disabled="!props.canUndo"
-            @click="listeners.undo"
-        >Undo</button>
-        <button
-            id="redo"
-            :disabled="!props.canRedo"
-            @click="listeners.redo"
-        >Redo</button>
-        <h4>{{ props.label }}</h4>
-        <ol>
-            <li v-for="(todo, i) in props.list" :key="i">{{ todo }}</li>
-        </ol>
-    </div>
+<template>
+  <div>
+    <button id="post" @click="$emit('postNewTodo')">Add</button>
+    <button id="undo" :disabled="!canUndo" @click="$emit('undo')">Undo</button>
+    <button id="redo" :disabled="!canRedo" @click="$emit('redo')">Redo</button>
+    <h4>{{ label }}</h4>
+    <ol>
+      <li v-for="(todo, i) in list" :key="i">{{ todo }}</li>
+    </ol>
+  </div>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-
+import Vue from 'vue'
 export default Vue.extend({
-    name: "Todos",
-    functional: true
-});
+  props: {
+    list: {
+      type: Array,
+      required: true
+    },
+    canUndo: {
+      type: Boolean,
+      required: true
+    },
+    canRedo: {
+      type: Boolean,
+      required: true
+    },
+    label: {
+      type: String,
+      required: true
+    }
+  }
+})
 </script>
