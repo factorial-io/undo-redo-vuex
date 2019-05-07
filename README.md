@@ -209,23 +209,11 @@ A demo Vue.js TODO application featuring this plugin is included in the `tests/v
 
 ## API documentation and reference
 
-### Functions
+### Public API
 
 <dl>
 <dt><a href="#store/plugins/undoRedo">store/plugins/undoRedo(options)</a> ⇒ <code>function</code></dt>
 <dd><p>The Undo-Redo plugin module</p>
-</dd>
-<dt><a href="#store/plugins/undoRedo_pipeActions">store/plugins/undoRedo:pipeActions(actions)</a></dt>
-<dd><p>Piping async action calls sequentially using Array.prototype.reduce
-to chain and initial, empty promise</p>
-</dd>
-<dt><a href="#store/plugins/undoRedo_getConfig">store/plugins/undoRedo:getConfig(namespace)</a> ⇒ <code>Object</code></dt>
-<dd><p>Piping async action calls sequentially using Array.prototype.reduce
-to chain and initial, empty promise</p>
-</dd>
-<dt><a href="#store/plugins/undoRedo_setConfig">store/plugins/undoRedo:setConfig(namespace, config)</a></dt>
-<dd><p>Piping async action calls sequentially using Array.prototype.reduce
-to chain and initial, empty promise</p>
 </dd>
 <dt><a href="#store/plugins/undoRedo_redo">store/plugins/undoRedo:redo()</a></dt>
 <dd><p>The Redo function - commits the latest undone mutation to the store,
@@ -249,6 +237,35 @@ The Undo-Redo plugin module
 | options | <code>Object</code> |  |
 | options.namespace | <code>String</code> | The named vuex store module |
 | options.ignoreMutations | <code>Array.&lt;String&gt;</code> | The list of store mutations (belonging to the module) to be ignored |
+
+<a name="store/plugins/undoRedo_redo"></a>
+
+### store/plugins/undoRedo:redo()
+The Redo function - commits the latest undone mutation to the store,
+and pushes it to the done stack
+
+<a name="store/plugins/undoRedo_undo"></a>
+
+### store/plugins/undoRedo:undo()
+The Undo function - pushes the latest done mutation to the top of the undone
+stack by popping the done stack and 'replays' all mutations in the done stack
+
+### Internal functions (reference only)
+
+<dl>
+<dt><a href="#store/plugins/undoRedo_pipeActions">store/plugins/undoRedo:pipeActions(actions)</a></dt>
+<dd><p>Piping async action calls sequentially using Array.prototype.reduce
+to chain and initial, empty promise</p>
+</dd>
+<dt><a href="#store/plugins/undoRedo_getConfig">store/plugins/undoRedo:getConfig(namespace)</a> ⇒ <code>Object</code></dt>
+<dd><p>Piping async action calls sequentially using Array.prototype.reduce
+to chain and initial, empty promise</p>
+</dd>
+<dt><a href="#store/plugins/undoRedo_setConfig">store/plugins/undoRedo:setConfig(namespace, config)</a></dt>
+<dd><p>Piping async action calls sequentially using Array.prototype.reduce
+to chain and initial, empty promise</p>
+</dd>
+</dl>
 
 <a name="store/plugins/undoRedo_pipeActions"></a>
 
@@ -284,15 +301,3 @@ to chain and initial, empty promise
 | --- | --- | --- |
 | namespace | <code>String</code> | The name of the store module |
 | config | <code>String</code> | The object containing the updated undo/redo stacks of the store module |
-
-<a name="store/plugins/undoRedo_redo"></a>
-
-### store/plugins/undoRedo:redo()
-The Redo function - commits the latest undone mutation to the store,
-and pushes it to the done stack
-
-<a name="store/plugins/undoRedo_undo"></a>
-
-### store/plugins/undoRedo:undo()
-The Undo function - pushes the latest done mutation to the top of the undone
-stack by popping the done stack and 'replays' all mutations in the done stack
