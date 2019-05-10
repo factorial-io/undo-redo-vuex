@@ -3,7 +3,7 @@
 // Logic based on: https://github.com/anthonygore/vuex-undo-redo
 
 const EMPTY_STATE = "emptyState";
-const UPDATE_CAN_UNDO_REO = "updateCanUndoRedo";
+const UPDATE_CAN_UNDO_REDO = "updateCanUndoRedo";
 const REDO = "redo";
 const UNDO = "undo";
 
@@ -88,7 +88,7 @@ export default (options: UndoRedoOptions) => (store: any) => {
             ? {
                 ignoreMutations: ignoreMutations
                   .map(mutation => `${namespace}/${mutation}`)
-                  .concat(`${namespace}/${UPDATE_CAN_UNDO_REO}`)
+                  .concat(`${namespace}/${UPDATE_CAN_UNDO_REDO}`)
               }
             : {})
         })
@@ -97,7 +97,7 @@ export default (options: UndoRedoOptions) => (store: any) => {
         createPathConfig({
           ignoreMutations: [
             ...(options.ignoreMutations || []),
-            UPDATE_CAN_UNDO_REO
+            UPDATE_CAN_UNDO_REDO
           ]
         })
       ];
@@ -134,10 +134,10 @@ export default (options: UndoRedoOptions) => (store: any) => {
     const undoEnabled = canUndo(namespace);
     const redoEnabled = canRedo(namespace);
 
-    store.commit(`${namespace}${UPDATE_CAN_UNDO_REO}`, {
+    store.commit(`${namespace}${UPDATE_CAN_UNDO_REDO}`, {
       canUndo: undoEnabled
     });
-    store.commit(`${namespace}${UPDATE_CAN_UNDO_REO}`, {
+    store.commit(`${namespace}${UPDATE_CAN_UNDO_REDO}`, {
       canRedo: redoEnabled
     });
   };
@@ -371,7 +371,7 @@ export default (options: UndoRedoOptions) => (store: any) => {
 
       if (
         mutation.type !== `${namespace}${EMPTY_STATE}` &&
-        mutation.type !== `${namespace}${UPDATE_CAN_UNDO_REO}` &&
+        mutation.type !== `${namespace}${UPDATE_CAN_UNDO_REDO}` &&
         ignoreMutations.indexOf(mutation.type) === -1 &&
         mutation.type.includes(namespace) &&
         newMutation
