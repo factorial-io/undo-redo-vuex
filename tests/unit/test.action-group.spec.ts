@@ -1,4 +1,3 @@
-import Vue from "vue";
 import store from "../store-non-namespaced";
 
 const item = {
@@ -24,18 +23,12 @@ describe("Testing undo/redo of grouped mutations (i.e. Actions)", () => {
     expect(state.list).toEqual(expectedState);
   });
 
-  // it("Assert items: should contain 4 items", async () => {
-  // });
-
   it("Undo secondGroup", async () => {
     await store.dispatch("undo");
 
     // Assert items: should contain 3 items
     expect(state.list).toEqual([{ ...item }, { ...item }, { ...other }]);
   });
-
-  // it("Assert items: should contain 3 items", async () => {
-  // });
 
   it("Undo firstGroup", async () => {
     await store.dispatch("undo");
@@ -44,18 +37,12 @@ describe("Testing undo/redo of grouped mutations (i.e. Actions)", () => {
     expect(state.list).toEqual([{ ...item }]);
   });
 
-  // it("Assert items: should contain 1 item", () => {
-  // });
-
   it("Redo firstGroup", async () => {
     await store.dispatch("redo");
 
     // Assert items: should contain 3 items
     expect(state.list).toEqual([{ ...item }, { ...item }, { ...other }]);
   });
-
-  // it("Assert items: should contain 3 items", async () => {
-  // });
 
   it("Redo secondGroup", async () => {
     await store.dispatch("redo");
@@ -68,9 +55,6 @@ describe("Testing undo/redo of grouped mutations (i.e. Actions)", () => {
       { ...item }
     ]);
   });
-
-  // it("Assert items: should contain 4 items", async () => {
-  // });
 
   it('Repeat action: "firstGroup"', () => {
     store.commit("addItem", { item, actionGroup: "firstGroup" });
@@ -98,7 +82,4 @@ describe("Testing undo/redo of grouped mutations (i.e. Actions)", () => {
       { ...item }
     ]);
   });
-
-  // it("Assert items: should contain 6 items", async () => {
-  // });
 });
