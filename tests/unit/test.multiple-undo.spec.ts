@@ -1,3 +1,4 @@
+import Vue from "vue";
 import store from "../store-non-namespaced";
 
 const state: any = store.state;
@@ -11,32 +12,25 @@ describe("Testing multiple undo/redo in a vuex store", () => {
     const expectedState = [{ ...item }, { ...item }, { ...item }];
 
     // Commit the item to the store and assert
-    await store.commit("addItem", { item });
-    await store.commit("addItem", { item });
-    await store.commit("addItem", { item });
+    store.commit("addItem", { item });
+    store.commit("addItem", { item });
+    store.commit("addItem", { item });
     expect(state.list).toEqual(expectedState);
 
     // The undo function should remove the item
+    // Undo twice
     await store.dispatch("undo");
-  });
-
-  it("Undo once", async () => {
+    await Vue.nextTick();
     await store.dispatch("undo");
-  });
 
-  it("Assert list items after undos", async () => {
+    // Assert list items after undos
     expect(state.list).toEqual([{ ...item }]);
   });
 
-  it("Redo once", async () => {
-    await store.dispatch("redo");
-  });
-
-  it("Redo once", async () => {
-    await store.dispatch("redo");
-  });
-
   it("Assert list items after redo", async () => {
+    // Redo twice
+    await store.dispatch("redo");
+    await store.dispatch("redo");
     expect(state.list).toEqual([{ ...item }, { ...item }, { ...item }]);
   });
 });

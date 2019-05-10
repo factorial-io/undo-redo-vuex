@@ -18,42 +18,49 @@ describe("Testing undo/redo of grouped mutations (i.e. Actions)", () => {
     store.commit("addItem", { item, actionGroup: "firstGroup" });
     store.commit("addItem", { item: other, actionGroup: "firstGroup" });
     store.commit("addItem", { item, actionGroup: "secondGroup" });
-  });
 
-  it("Assert items: should contain 4 items", async () => {
+    // Assert items: should contain 4 items
     const expectedState = [{ ...item }, { ...item }, { ...other }, { ...item }];
     expect(state.list).toEqual(expectedState);
   });
 
+  // it("Assert items: should contain 4 items", async () => {
+  // });
+
   it("Undo secondGroup", async () => {
     await store.dispatch("undo");
-  });
 
-  it("Assert items: should contain 3 items", async () => {
+    // Assert items: should contain 3 items
     expect(state.list).toEqual([{ ...item }, { ...item }, { ...other }]);
   });
+
+  // it("Assert items: should contain 3 items", async () => {
+  // });
 
   it("Undo firstGroup", async () => {
     await store.dispatch("undo");
-  });
 
-  it("Assert items: should contain 1 item", () => {
+    // Assert items: should contain 1 item
     expect(state.list).toEqual([{ ...item }]);
   });
 
+  // it("Assert items: should contain 1 item", () => {
+  // });
+
   it("Redo firstGroup", async () => {
     await store.dispatch("redo");
-  });
 
-  it("Assert items: should contain 3 items", async () => {
+    // Assert items: should contain 3 items
     expect(state.list).toEqual([{ ...item }, { ...item }, { ...other }]);
   });
 
+  // it("Assert items: should contain 3 items", async () => {
+  // });
+
   it("Redo secondGroup", async () => {
     await store.dispatch("redo");
-  });
 
-  it("Assert items: should contain 4 items", async () => {
+    // Assert items: should contain 4 items
     expect(state.list).toEqual([
       { ...item },
       { ...item },
@@ -62,12 +69,14 @@ describe("Testing undo/redo of grouped mutations (i.e. Actions)", () => {
     ]);
   });
 
+  // it("Assert items: should contain 4 items", async () => {
+  // });
+
   it('Repeat action: "firstGroup"', () => {
     store.commit("addItem", { item, actionGroup: "firstGroup" });
     store.commit("addItem", { item: other, actionGroup: "firstGroup" });
-  });
 
-  it("Assert items: should contain 6 items", async () => {
+    // Assert items: should contain 6 items
     expect(state.list).toEqual([
       { ...item },
       { ...item },
@@ -80,9 +89,8 @@ describe("Testing undo/redo of grouped mutations (i.e. Actions)", () => {
 
   it("Undo firstGroup", async () => {
     await store.dispatch("undo");
-  });
 
-  it("Assert items: should contain 6 items", async () => {
+    // Assert items: should contain 6 items
     expect(state.list).toEqual([
       { ...item },
       { ...item },
@@ -90,4 +98,7 @@ describe("Testing undo/redo of grouped mutations (i.e. Actions)", () => {
       { ...item }
     ]);
   });
+
+  // it("Assert items: should contain 6 items", async () => {
+  // });
 });
