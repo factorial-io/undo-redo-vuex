@@ -1,4 +1,5 @@
 import store from "../store-non-namespaced";
+import { undo, redo } from "./utils-test";
 
 const item = {
   foo: "bar"
@@ -24,28 +25,28 @@ describe("Testing undo/redo of grouped mutations (i.e. Actions)", () => {
   });
 
   it("Undo secondGroup", async () => {
-    await store.dispatch("undo");
+    await undo(store)();
 
     // Assert items: should contain 3 items
     expect(state.list).toEqual([{ ...item }, { ...item }, { ...other }]);
   });
 
   it("Undo firstGroup", async () => {
-    await store.dispatch("undo");
+    await undo(store)();
 
     // Assert items: should contain 1 item
     expect(state.list).toEqual([{ ...item }]);
   });
 
   it("Redo firstGroup", async () => {
-    await store.dispatch("redo");
+    await redo(store)();
 
     // Assert items: should contain 3 items
     expect(state.list).toEqual([{ ...item }, { ...item }, { ...other }]);
   });
 
   it("Redo secondGroup", async () => {
-    await store.dispatch("redo");
+    await redo(store)();
 
     // Assert items: should contain 4 items
     expect(state.list).toEqual([
@@ -72,7 +73,7 @@ describe("Testing undo/redo of grouped mutations (i.e. Actions)", () => {
   });
 
   it("Undo firstGroup", async () => {
-    await store.dispatch("undo");
+    await undo(store)();
 
     // Assert items: should contain 6 items
     expect(state.list).toEqual([

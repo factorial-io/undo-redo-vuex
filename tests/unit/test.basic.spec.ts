@@ -1,5 +1,5 @@
-import Vue from "vue";
 import store from "../store";
+import { undo, redo } from "./utils-test";
 
 const item = {
   foo: "bar"
@@ -20,7 +20,7 @@ describe("Simple testing for undo/redo on a namespaced vuex store", () => {
   it("Check 'canUndo' value; The undo function should remove the item", async () => {
     expect(state.list.canUndo).toBeTruthy();
 
-    await store.dispatch("list/undo");
+    await undo(store)("list");
 
     // Check 'canUndo' value, Assert list items after undo
     expect(state.list.canUndo).toBeFalsy();
@@ -29,7 +29,7 @@ describe("Simple testing for undo/redo on a namespaced vuex store", () => {
 
   it("Redo 'addItem' commit", async () => {
     expect(state.list.canRedo).toBeTruthy();
-    await store.dispatch("list/redo");
+    await redo(store)("list");
   });
 
   it("Grouped mutations: adding two items to the list", async () => {
@@ -45,7 +45,7 @@ describe("Simple testing for undo/redo on a namespaced vuex store", () => {
 
   it("Dispatch undo", async () => {
     // The undo function should remove the item
-    await store.dispatch("list/undo");
+    await undo(store)("list");
 
     // Assert list items after undo: should contain 1 item
     expect(state.list.list).toEqual([{ ...item }]);
@@ -53,7 +53,7 @@ describe("Simple testing for undo/redo on a namespaced vuex store", () => {
 
   it("Redo 'addItem' twice (grouped mutations)", async () => {
     // Redo 'addItem'
-    await store.dispatch("list/redo");
+    await redo(store)("list");
     const anotherItem = { foo: "baz" };
     const expectedState = [{ ...item }, { ...item }, { ...anotherItem }];
 
@@ -72,7 +72,7 @@ describe("Simple testing for undo/redo on a namespaced vuex store", () => {
     });
     expect(state.list.list).toEqual(expectedState);
 
-    await store.dispatch("list/undo");
+    await undo(store)("list");
     expectedState = [{ ...item }];
     expect(state.list.shadow).toEqual(expectedState);
   });
@@ -81,7 +81,7 @@ describe("Simple testing for undo/redo on a namespaced vuex store", () => {
 
   it('"removeShadow" should be dispatched on redo', async () => {
     // Redo 'addItem'
-    await store.dispatch("list/redo");
+    await redo(store)("list");
     const expectedState = [
       { foo: "bar" },
       { foo: "bar" },
@@ -89,7 +89,6 @@ describe("Simple testing for undo/redo on a namespaced vuex store", () => {
       { foo: "bar" }
     ];
 
-    await Vue.nextTick();
     expect(state.list.list).toEqual(expectedState);
     // Check shadow: should contain no items
     expect(state.list.shadow).toEqual([]);

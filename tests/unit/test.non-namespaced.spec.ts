@@ -1,5 +1,5 @@
-import Vue from "vue";
 import store from "../store-non-namespaced";
+import { undo, redo } from "./utils-test";
 
 const state: any = store.state;
 
@@ -18,7 +18,7 @@ describe("Testing undo/redo in a non-namespaced vuex store", () => {
 
   it("Check 'canUndo' value; The undo function should remove the item", async () => {
     expect(state.canUndo).toBeTruthy();
-    await store.dispatch("undo");
+    await undo(store)();
 
     // Check 'canUndo' value, Assert list items after undo
     expect(state.canUndo).toBeFalsy();
@@ -26,7 +26,7 @@ describe("Testing undo/redo in a non-namespaced vuex store", () => {
   });
 
   it("Redo 'addItem' commit", async () => {
-    await store.dispatch("redo");
+    await redo(store)();
 
     // Assert list items after redo
     const expectedState = [{ ...item }];
@@ -44,7 +44,7 @@ describe("Testing undo/redo in a non-namespaced vuex store", () => {
     expect(state.list).toEqual(expectedState);
 
     // The undo function should remove the item
-    await store.dispatch("undo");
+    await undo(store)();
 
     // Assert list items after undo: should contain 1 item
     expect(state.list).toEqual([{ ...item }]);
@@ -52,9 +52,8 @@ describe("Testing undo/redo in a non-namespaced vuex store", () => {
 
   it("Assert list items after redos: should contain 3 items", async () => {
     // Redo "addItem" twice
-    await store.dispatch("redo");
-    await Vue.nextTick();
-    await store.dispatch("redo");
+    await redo(store)();
+    await redo(store)();
     const anotherItem = { foo: "baz" };
     const expectedState = [{ ...item }, { ...item }, { ...anotherItem }];
 
@@ -73,14 +72,14 @@ describe("Testing undo/redo in a non-namespaced vuex store", () => {
     });
     expect(state.list).toEqual(expectedState);
 
-    await store.dispatch("undo");
+    await undo(store)();
     expectedState = [{ ...item }];
     expect(state.shadow).toEqual(expectedState);
   });
 
   it("'removeShadow' should be dispatched on redo", async () => {
     // Redo "addItem"
-    await store.dispatch("redo");
+    await redo(store)();
     const expectedState = [
       { foo: "bar" },
       { foo: "bar" },
@@ -89,7 +88,6 @@ describe("Testing undo/redo in a non-namespaced vuex store", () => {
     ];
 
     // Check shadow: should contain no items
-    await Vue.nextTick();
     expect(state.list).toEqual(expectedState);
     expect(state.shadow).toEqual([]);
   });

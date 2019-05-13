@@ -1,5 +1,5 @@
-import Vue from "vue";
 import store from "../store-non-namespaced";
+import { undo, redo } from "./utils-test";
 
 const state: any = store.state;
 
@@ -19,9 +19,8 @@ describe("Testing multiple undo/redo in a vuex store", () => {
 
     // The undo function should remove the item
     // Undo twice
-    await store.dispatch("undo");
-    await Vue.nextTick();
-    await store.dispatch("undo");
+    await undo(store)();
+    await undo(store)();
 
     // Assert list items after undos
     expect(state.list).toEqual([{ ...item }]);
@@ -29,8 +28,8 @@ describe("Testing multiple undo/redo in a vuex store", () => {
 
   it("Assert list items after redo", async () => {
     // Redo twice
-    await store.dispatch("redo");
-    await store.dispatch("redo");
+    await redo(store)();
+    await redo(store)();
     expect(state.list).toEqual([{ ...item }, { ...item }, { ...item }]);
   });
 });

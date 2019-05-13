@@ -1,9 +1,7 @@
 import store from "../store-non-namespaced";
+import { undo, redo } from "./utils-test";
 
 const state: any = store.state;
-
-const redo = () => store.dispatch("redo");
-const undo = () => store.dispatch("undo");
 
 const item = (id: number, label: string) => ({ id, label });
 const firstGroupItems = [
@@ -52,12 +50,12 @@ describe("Testing more advanced combinations of grouped mutations", () => {
   });
 
   it("Undo secondGroup should remove all secondGroup items", async () => {
-    await undo();
+    await undo(store)();
     expect(state.list).toEqual([...firstGroupItems, itemWithoutGroup]);
   });
 
   it("Redo secondGroup should restore full list", async () => {
-    await redo();
+    await redo(store)();
     expect(state.list).toEqual([
       ...firstGroupItems,
       itemWithoutGroup,
@@ -66,32 +64,32 @@ describe("Testing more advanced combinations of grouped mutations", () => {
   });
 
   it("Undo secondGroup", async () => {
-    await undo();
+    await undo(store)();
     expect(state.list).toEqual([...firstGroupItems, itemWithoutGroup]);
   });
 
   it("Undo secondGroup and mutation without group", async () => {
-    await undo();
+    await undo(store)();
     expect(state.list).toEqual(firstGroupItems);
   });
 
   it("Undo firstGroup as well should leave list empty", async () => {
-    await undo();
+    await undo(store)();
     expect(state.list).toEqual([]);
   });
 
   it("Redo firstGroup should restore items from firstGroup", async () => {
-    await redo();
+    await redo(store)();
     expect(state.list).toEqual(firstGroupItems);
   });
 
   it("Redo mutation without group should restore that item", async () => {
-    await redo();
+    await redo(store)();
     expect(state.list).toEqual([...firstGroupItems, itemWithoutGroup]);
   });
 
   it("Redo secondGroup should restore full list again", async () => {
-    await redo();
+    await redo(store)();
     expect(state.list).toEqual([
       ...firstGroupItems,
       itemWithoutGroup,
