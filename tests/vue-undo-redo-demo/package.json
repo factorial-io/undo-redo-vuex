@@ -12,6 +12,7 @@
   "dependencies": {
     "register-service-worker": "^1.0.0",
     "vue": "^2.5.17",
+    "vue-function-api": "^2.0.6",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"
   },
@@ -30,7 +31,7 @@
     "@vue/eslint-config-typescript": "^3.0.4",
     "@vue/test-utils": "^1.0.0-beta.20",
     "babel-core": "7.0.0-bridge.0",
-    "node-sass": "^4.9.0",
+    "node-sass": "^4.12.0",
     "prettier-stylelint": "^0.4.2",
     "sass-loader": "^7.0.1",
     "stylelint-config-factorial": "^7.1.1",
