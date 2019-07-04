@@ -5,13 +5,25 @@ import store from "@/store";
 
 Vue.use(plugin);
 
-export const useStore = () => store;
-export const list = computed(() => store.state.list.list);
-export const canUndo = computed(() => store.state.list.canUndo);
-export const canRedo = computed(() => store.state.list.canRedo);
-export const label = computed(() => (
-  store.state.list.length ? "My Todos" : "You don't have any Todos yet"
-));
+export default () => {
+  const useStore = () => store;
+  const list = computed(() => store.state.list.list);
+  const canUndo = computed(() => store.state.list.canUndo);
+  const canRedo = computed(() => store.state.list.canRedo);
+  const label = computed(() => (
+    store.state.list.length ? "My Todos" : "You don't have any Todos yet"
+  ));
 
-export const undo = () => store.dispatch("list/undo");
-export const redo = () => store.dispatch("list/redo");
+  const undo = () => store.dispatch("list/undo");
+  const redo = () => store.dispatch("list/redo");
+
+  return {
+    useStore,
+    list,
+    canUndo,
+    canRedo,
+    label,
+    undo,
+    redo
+  };
+};

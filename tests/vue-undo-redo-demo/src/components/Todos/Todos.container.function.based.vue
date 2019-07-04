@@ -8,7 +8,7 @@
 <script>
 import Vue from "vue";
 import { value, computed } from "vue-function-api";
-import { useStore, list, canUndo, canRedo, label, undo, redo } from "@/utils/utils-store";
+import useListStore from "@/utils/utils-store";
 import Todos from "./Todos.vue";
 
 export default {
@@ -16,6 +16,7 @@ export default {
     Todos
   },
   setup() {
+    const { useStore, list, canUndo, canRedo, label, undo, redo } = useListStore();
     const newTodo = value("");
     const store = useStore();
     
