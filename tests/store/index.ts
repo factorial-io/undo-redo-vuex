@@ -1,6 +1,7 @@
 import Vuex from "vuex";
 import Vue from "vue";
 import list from "./modules/list";
+import auth from "./modules/auth";
 import undoRedo from "../../src/undoRedo";
 
 Vue.use(Vuex);
@@ -19,7 +20,8 @@ export const store = {
     })
   ],
   modules: {
-    list
+    list,
+    auth
   },
   strict: debug
 };

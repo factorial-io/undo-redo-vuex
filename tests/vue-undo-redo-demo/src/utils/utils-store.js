@@ -5,7 +5,7 @@ import store from "@/store";
 
 Vue.use(plugin);
 
-export default () => {
+export const useList = () => {
   const useStore = () => store;
   const list = computed(() => store.state.list.list);
   const canUndo = computed(() => store.state.list.canUndo);
@@ -26,4 +26,12 @@ export default () => {
     undo,
     redo
   };
+};
+
+export const useAuth = () => {
+  const isAuthenticated = computed(() => store.getters["auth/isAuthenticated"]);
+  const login = () => store.dispatch("auth/login");
+  const logout = () => store.dispatch("auth/logout");
+
+  return { isAuthenticated, login, logout };
 };

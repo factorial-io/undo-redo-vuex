@@ -1,13 +1,19 @@
 <template>
   <div>
-    <input v-model="newTodo" type="text" @keyup.enter.prevent="postNewTodo">
-    <todos v-bind="todoData" @postNewTodo="postNewTodo" @undo="undo" @redo="redo"/>
+    <template v-if="isAuthenticated">
+      <input v-model="newTodo" type="text" @keyup.enter.prevent="postNewTodo">
+      <todos v-bind="todoData" @postNewTodo="postNewTodo" @undo="undo" @redo="redo"/>
+    </template>
+    <button @click="() => (isAuthenticated ? logout() : login())">
+      {{ isAuthenticated ? 'Logout' : 'Login' }}
+    </button>
+    <h1>{{ isAuthenticated ? '' : 'NOT' }} Logged In</h1>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import { mapState, mapMutations, mapActions } from "vuex";
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import Todos from "./Todos.vue";
 
 export default Vue.extend({
@@ -16,6 +22,7 @@ export default Vue.extend({
   },
   computed: {
     ...mapState("list", ["list", "canUndo", "canRedo"]),
+    ...mapGetters("auth", ["isAuthenticated"]),
     label(): string {
       // @ts-ignore
       return this.list.length ? "My Todos" : "You don't have any Todos yet"
@@ -42,6 +49,7 @@ export default Vue.extend({
   methods: {
     ...mapMutations("list", ["addItem"]),
     ...mapActions("list", ["undo", "redo"]),
+    ...mapActions("auth", ["login", "logout"]),
     postNewTodo() {
       // @ts-ignore
       this.addItem({ item: this.newTodo });
