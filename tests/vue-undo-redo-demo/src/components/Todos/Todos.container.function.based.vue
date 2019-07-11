@@ -12,7 +12,6 @@
 </template>
 
 <script>
-import Vue from "vue";
 import { value, computed } from "vue-function-api";
 import { useList, useAuth } from "@/utils/utils-store";
 import Todos from "./Todos.vue";
