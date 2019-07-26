@@ -32,12 +32,24 @@ The `scaffoldStore` helper function will bootstrap a vuex store to setup the `st
 import { scaffoldStore } from 'undo-redo-vuex';
 
 const state = {
+  list: [],
   // Define vuex state properties as normal
 };
 const actions = {
   // Define vuex actions as normal
 };
 const mutations = {
+  /* 
+   * NB: The emptyState mutation HAS to be impemented.
+   * This mutation resets the state props to a "base" state,
+   * on top of which subsequent mutations are "replayed"
+   * whenever undo/redo is dispatched.
+  */
+  emptyState: (state) => {
+    // Sets some state prop to an initial value
+    state.list = [];
+  },
+
   // Define vuex mutations as normal
 }
 
