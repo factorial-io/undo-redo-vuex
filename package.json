@@ -5,11 +5,12 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --target lib --name undo-redo-vuex src/undoRedo.ts",
     "lint": "vue-cli-service lint",
-    "test:unit": "vue-cli-service test:unit"
+    "test:unit": "vue-cli-service test:unit",
+    "build:webpack": "webpack --config build.config.js"
   },
   "dependencies": {},
   "devDependencies": {
-    "@types/jest": "^23.1.4",
+    "@types/jest": "^23.3.14",
     "@vue/cli-plugin-babel": "^3.0.1",
     "@vue/cli-plugin-eslint": "^3.0.1",
     "@vue/cli-plugin-typescript": "^3.0.1",
@@ -19,13 +20,15 @@
     "@vue/eslint-config-typescript": "^3.0.3",
     "@vue/test-utils": "^1.0.0-beta.20",
     "babel-core": "7.0.0-bridge.0",
+    "clean-webpack-plugin": "^3.0.0",
     "lint-staged": "^7.2.2",
     "node-sass": "^4.12.0",
     "ts-jest": "^23.0.0",
     "typescript": "^3.0.0",
     "vue": "^2.6.10",
     "vue-template-compiler": "^2.5.17",
-    "vuex": "^3.1.1"
+    "vuex": "^3.1.1",
+    "webpack-cli": "^3.3.6"
   },
   "lint-staged": {
     "*.js": [
@@ -46,5 +49,5 @@
     "type": "git",
     "url": "https://github.com/andrewbeng89/undo-redo-vuex.git"
   },
-  "main": "./dist/undo-redo-vuex.umd.min.js"
+  "main": "./dist/undo-redo-vuex.min.js"
 }
