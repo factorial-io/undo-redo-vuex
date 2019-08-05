@@ -2,11 +2,8 @@
   "name": "undo-redo-vuex",
   "version": "1.1.10",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --target lib --name undo-redo-vuex src/undoRedo.ts",
-    "lint": "vue-cli-service lint",
-    "test:unit": "vue-cli-service test:unit",
-    "build:webpack": "webpack --config build.config.js"
+    "build": "webpack --config build.config.js",
+    "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {},
   "devDependencies": {
