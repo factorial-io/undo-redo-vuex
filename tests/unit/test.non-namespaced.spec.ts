@@ -1,3 +1,4 @@
+import Vue from "vue";
 import store from "../store-non-namespaced";
 import { undo, redo } from "./utils-test";
 
@@ -19,6 +20,7 @@ describe("Testing undo/redo in a non-namespaced vuex store", () => {
   it("Check 'canUndo' value; The undo function should remove the item", async () => {
     expect(state.canUndo).toBeTruthy();
     await undo(store)();
+    await Vue.nextTick();
 
     // Check 'canUndo' value, Assert list items after undo
     expect(state.canUndo).toBeFalsy();

@@ -1,3 +1,4 @@
+import Vue from "vue";
 import store from "../store-non-namespaced";
 import { undo, redo } from "./utils-test";
 
@@ -20,7 +21,10 @@ describe("Testing multiple undo/redo in a vuex store", () => {
     // The undo function should remove the item
     // Undo twice
     await undo(store)();
+    await Vue.nextTick();
+
     await undo(store)();
+    await Vue.nextTick();
 
     // Assert list items after undos
     expect(state.list).toEqual([{ ...item }]);
