@@ -2,7 +2,7 @@
   "name": "undo-redo-vuex",
   "version": "1.1.11",
   "scripts": {
-    "build": "webpack --config build.config.js",
+    "build": "vue-cli-service build --target lib --name undo-redo-vuex src/undoRedo.ts",
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {},
@@ -46,5 +46,5 @@
     "type": "git",
     "url": "https://github.com/andrewbeng89/undo-redo-vuex.git"
   },
-  "main": "./dist/undo-redo-vuex.min.js"
+  "main": "./dist/undo-redo-vuex.umd.min.js"
 }
