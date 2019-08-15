@@ -7,6 +7,10 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
+        loader: "babel-loader"
+      },
+      {
+        test: /\.tsx?$/,
         type: "javascript/esm",
         use: "ts-loader",
         exclude: /node_modules/
@@ -19,7 +23,7 @@ module.exports = {
   output: {
     filename: "undo-redo-vuex.min.js",
     path: path.resolve(__dirname, "dist"),
-    libraryTarget: "umd"
+    libraryTarget: "commonjs2"
   },
   plugins: [new CleanWebpackPlugin()],
   mode: "production"
