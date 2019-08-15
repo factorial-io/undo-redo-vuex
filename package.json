@@ -1,6 +1,6 @@
 {
   "name": "undo-redo-vuex",
-  "version": "1.1.11",
+  "version": "1.1.12",
   "scripts": {
     "build": "vue-cli-service build --target lib --name undo-redo-vuex src/undoRedo.ts",
     "test:unit": "vue-cli-service test:unit"
