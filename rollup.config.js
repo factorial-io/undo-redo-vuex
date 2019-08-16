@@ -1,4 +1,5 @@
 import babel from "rollup-plugin-babel";
+import commonjs from "rollup-plugin-commonjs";
 import resolve from "rollup-plugin-node-resolve";
 import pkg from "./package.json";
 
@@ -16,6 +17,8 @@ export default {
   plugins: [
     // Compile TypeScript/JavaScript files
     resolve({ extensions }),
+
+    commonjs(),
 
     babel({
       extensions,
