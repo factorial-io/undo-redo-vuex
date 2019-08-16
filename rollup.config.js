@@ -2,8 +2,6 @@ import babel from "rollup-plugin-babel";
 import resolve from "rollup-plugin-node-resolve";
 import pkg from "./package.json";
 
-const { presets } = require("./babel.config");
-
 const extensions = [".js", ".jsx", ".ts", ".tsx"];
 
 const name = "undoRedo";
@@ -20,11 +18,9 @@ export default {
     resolve({ extensions }),
 
     babel({
-      babelrc: false,
       extensions,
       include: ["src/**/*"],
-      runtimeHelpers: true,
-      presets
+      runtimeHelpers: true
     })
   ],
 
