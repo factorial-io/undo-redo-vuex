@@ -94,7 +94,7 @@ const canUndo = (paths: UndoRedoOptions[]) => (namespace: string) => {
  * (belonging to the module) to be ignored
  * @returns {Function} plugin - the plugin function which accepts the store parameter
  */
-export default (options: UndoRedoOptions) => (store: any) => {
+export default (options: UndoRedoOptions = {}) => (store: any) => {
   const paths = options.paths
     ? mapPaths(options.paths)
     : [
