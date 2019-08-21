@@ -2859,7 +2859,8 @@ var canUndo$1 = function canUndo(paths) {
  */
 
 
-var undoRedo = (function (options) {
+var undoRedo = (function () {
+  var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   return function (store) {
     var paths = options.paths ? mapPaths(options.paths) : [createPathConfig({
       ignoreMutations: [].concat(_toConsumableArray(options.ignoreMutations || []), [UPDATE_CAN_UNDO_REDO])
