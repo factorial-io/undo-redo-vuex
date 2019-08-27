@@ -16,6 +16,7 @@ export const useList = () => {
 
   const undo = () => store.dispatch("list/undo");
   const redo = () => store.dispatch("list/redo");
+  const clear = () => store.dispatch("list/clear");
 
   return {
     useStore,
@@ -24,7 +25,8 @@ export const useList = () => {
     canRedo,
     label,
     undo,
-    redo
+    redo,
+    clear
   };
 };
 

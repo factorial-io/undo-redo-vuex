@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import TodosContainer from "../components/Todos/Todos.container.function.based.vue";
+import TodosContainer from "../components/Todos/Todos.container.vue";
 
 export default Vue.extend({
   name: "home",

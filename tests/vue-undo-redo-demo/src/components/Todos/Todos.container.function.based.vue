@@ -2,7 +2,7 @@
   <div>
     <template v-if="isAuthenticated">
       <input v-model="newTodo" type="text" @keyup.enter.prevent="postNewTodo">
-      <todos v-bind="todoData" @postNewTodo="postNewTodo" @undo="undo" @redo="redo"/>
+      <todos v-bind="todoData" @postNewTodo="postNewTodo" @undo="undo" @redo="redo" @clear="clear" />
     </template>
     <button @click="() => (isAuthenticated ? logout() : login())">
       {{ isAuthenticated ? 'Logout' : 'Login' }}
@@ -21,7 +21,7 @@ export default {
     Todos
   },
   setup() {
-    const { useStore, list, canUndo, canRedo, label, undo, redo } = useList();
+    const { useStore, list, canUndo, canRedo, label, undo, redo, clear } = useList();
     const { isAuthenticated, login, logout } = useAuth();
     const newTodo = value("");
     const store = useStore();
@@ -47,6 +47,7 @@ export default {
       postNewTodo,
       undo,
       redo,
+      clear,
       isAuthenticated,
       login,
       logout
