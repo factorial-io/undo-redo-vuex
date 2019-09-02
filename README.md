@@ -205,6 +205,65 @@ undone = [
 ];
 ```
 
+### Working with undo/redo on mutations produced by side effects (i.e. API/database calls
+
+In Vue.js apps, vuex mutations are often committed inside actions, along side asynchronous calls to an API/database servive: e.g. `commit("list/addItem", item)` is called after an axios request to `PUT https://<your-rest-api>/v1/list`. When undoing the `commit("list/addItem", item)` mutation, an appropriate API call is required to `DELETE` this item. The inverse applies if the first API call is the `DELETE` method, i.e. `PUT` has to be called when the `commit("list/removeItem", item)` is undone. View the unit test for this feature [here](https://github.com/factorial-io/undo-redo-vuex/blob/b2a61ae92aad8c76ed9328021d2c6fc62ccc0774/tests/unit/test.basic.spec.ts#L66).
+
+The scenario can be implemented by providing the respective actions names as the `undoCallback` and `redoCallback` fields in the mutation payload (NB: the payload object should be parameterized as an object literal):
+
+```js
+const actions = {
+  saveItem: async (({ commit }), item) => {
+    await axios.put(PUT_ITEM, item);
+    commit("addItem", {
+      item,
+      // dispatch("deleteItem", { item }) on undo()
+      undoCallback: "deleteItem",
+      // dispatch("saveItem", { item }) on redo()
+      redoCallback: "saveItem"
+    });
+  },
+  deleteItem: async (({ commit }), item) => {
+    await axios.delete(DELETE_ITEM, item);
+    commit("removeItem", {
+      item,
+      // dispatch("saveItem", { item }) on undo()
+      undoCallback: "saveItem",
+      // dispatch("deleteItem", { item }) on redo()
+      redoCallback: "deleteItem"
+    });
+  }
+};
+
+const mutations = {
+  // NB: payload parameters as object literal props
+  addItem: (state, { item }) => {
+    // adds the item to the list
+  },
+  removeItem: (state, { item }) => {
+    // removes the item from the list
+  }
+};
+```
+
+### Clearing the undo/redo stacks with the `clear` action
+
+The internal `done` and `undone` stacks used to track mutations in the vuex store/modules can be cleared (i.e. emptied) with the `clear` action. This action is scaffolded when using `scaffoldActions(actions)` of `scaffoldStore(store)`. This enhancement is described further in [issue #7](https://github.com/factorial-io/undo-redo-vuex/issues/7#issuecomment-490073843), with accompanying [unit tests](https://github.com/factorial-io/undo-redo-vuex/commit/566a13214d0804ab09f63fcccf502cb854327f8e).
+
+```js
+/**
+ * Current done stack: [mutationA, mutation B]
+ * Current undone stack: [mutationC]
+ **/
+this.$store.dispatch("list/clear");
+
+await this.$nextTick();
+/**
+ * Current done stack: []
+ * Current undone stack: []
+ **/
+```
+
 ## Testing and test scenarios
 
 Development tests are run using the [Jest](https://jestjs.io/) test runner. The `./tests/store` directory contains a basic Vuex store with a namespaced `list` module.
