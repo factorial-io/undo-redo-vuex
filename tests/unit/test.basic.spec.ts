@@ -105,7 +105,7 @@ describe("Simple testing for undo/redo on a namespaced vuex store", () => {
 
   it('"canUndo" and "canRedo" should be reset', () => {
     expect(state.list.canUndo).toBeFalsy();
-    expect(state.list.canUndo).toBeFalsy();
+    expect(state.list.canRedo).toBeFalsy();
   });
 
   it("Add item to list", () => {
