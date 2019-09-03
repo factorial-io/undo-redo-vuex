@@ -1716,7 +1716,8 @@ _objectSap('keys', function () {
 });var EMPTY_STATE = "emptyState";
 var UPDATE_CAN_UNDO_REDO = "updateCanUndoRedo";
 var REDO = "redo";
-var UNDO = "undo";// 7.2.2 IsArray(argument)
+var UNDO = "undo";
+var CLEAR = "clear";// 7.2.2 IsArray(argument)
 
 var _isArray = Array.isArray || function isArray(arg) {
   return _cof(arg) == 'Array';
@@ -2754,10 +2755,70 @@ var execUndo = (function (_ref) {
       };
     }()
   );
+});var execClear = (function (_ref) {
+  var paths = _ref.paths,
+      store = _ref.store;
+  return (
+    /*#__PURE__*/
+    function () {
+      var _ref2 = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee(namespace) {
+        var config, undoCallbacks, done, undone;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                config = getConfig(paths)(namespace);
+
+                if (!Object.keys(config).length) {
+                  _context.next = 12;
+                  break;
+                }
+
+                undoCallbacks = config.done.map(function (_ref3) {
+                  var payload = _ref3.payload;
+                  return {
+                    action: payload.undoCallback ? "".concat(namespace).concat(payload.undoCallback) : "",
+                    payload: payload
+                  };
+                });
+                _context.next = 5;
+                return pipeActions(store)(undoCallbacks);
+
+              case 5:
+                done = [];
+                undone = [];
+                config.newMutation = false;
+                store.commit("".concat(namespace).concat(EMPTY_STATE));
+                config.newMutation = true;
+                setConfig(paths)(namespace, _objectSpread({}, config, {
+                  done: done,
+                  undone: undone
+                }));
+                updateCanUndoRedo({
+                  paths: paths,
+                  store: store
+                })(namespace);
+
+              case 12:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }));
+
+      return function (_x) {
+        return _ref2.apply(this, arguments);
+      };
+    }()
+  );
 });var noop = function noop() {};
 
 var undo = noop;
 var redo = noop;
+var clear = noop;
 var scaffoldState = function scaffoldState(state) {
   return _objectSpread({}, state, {
     canUndo: false,
@@ -2767,7 +2828,8 @@ var scaffoldState = function scaffoldState(state) {
 var scaffoldActions = function scaffoldActions(actions) {
   return _objectSpread({}, actions, {
     undo: undo,
-    redo: redo
+    redo: redo,
+    clear: clear
   });
 };
 var scaffoldMutations = function scaffoldMutations(mutations) {
@@ -2902,7 +2964,7 @@ var undoRedo = (function () {
                 isStoreNamespaced = action.type.split("/").length > 1;
                 namespace = isStoreNamespaced ? "".concat(action.type.split("/")[0], "/") : "";
                 _context.t0 = action.type;
-                _context.next = _context.t0 === "".concat(namespace).concat(REDO) ? 5 : _context.t0 === "".concat(namespace).concat(UNDO) ? 9 : 13;
+                _context.next = _context.t0 === "".concat(namespace).concat(REDO) ? 5 : _context.t0 === "".concat(namespace).concat(UNDO) ? 9 : _context.t0 === "".concat(namespace).concat(CLEAR) ? 13 : 16;
                 break;
 
               case 5:
@@ -2918,7 +2980,7 @@ var undoRedo = (function () {
                 })(namespace);
 
               case 8:
-                return _context.abrupt("break", 14);
+                return _context.abrupt("break", 17);
 
               case 9:
                 if (!canUndo$1(paths)(namespace)) {
@@ -2933,12 +2995,22 @@ var undoRedo = (function () {
                 })(namespace);
 
               case 12:
-                return _context.abrupt("break", 14);
+                return _context.abrupt("break", 17);
 
               case 13:
-                return _context.abrupt("break", 14);
+                _context.next = 15;
+                return execClear({
+                  paths: paths,
+                  store: store
+                })(namespace);
 
-              case 14:
+              case 15:
+                return _context.abrupt("break", 17);
+
+              case 16:
+                return _context.abrupt("break", 17);
+
+              case 17:
               case "end":
                 return _context.stop();
             }
@@ -2951,4 +3023,4 @@ var undoRedo = (function () {
       };
     }());
   };
-});export default undoRedo;export{redo,scaffoldActions,scaffoldMutations,scaffoldState,scaffoldStore,undo};
+});export default undoRedo;export{clear,redo,scaffoldActions,scaffoldMutations,scaffoldState,scaffoldStore,undo};

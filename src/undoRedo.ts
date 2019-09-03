@@ -1,14 +1,22 @@
 /* eslint-disable no-param-reassign, no-shadow */
-import { EMPTY_STATE, UPDATE_CAN_UNDO_REDO, REDO, UNDO } from "./constants";
+import {
+  EMPTY_STATE,
+  UPDATE_CAN_UNDO_REDO,
+  REDO,
+  UNDO,
+  CLEAR
+} from "./constants";
 import { getConfig, setConfig, updateCanUndoRedo } from "./utils-undo-redo";
 import execRedo from "./redo";
 import execUndo from "./undo";
+import execClear from "./clear";
 
 // Logic based on: https://github.com/anthonygore/vuex-undo-redo
 
 const noop = () => {};
 export const undo = noop;
 export const redo = noop;
+export const clear = noop;
 
 export const scaffoldState = (state: any) => ({
   ...state,
@@ -19,7 +27,8 @@ export const scaffoldState = (state: any) => ({
 export const scaffoldActions = (actions: any) => ({
   ...actions,
   undo,
-  redo
+  redo,
+  clear
 });
 
 export const scaffoldMutations = (mutations: any) => ({
@@ -146,6 +155,9 @@ export default (options: UndoRedoOptions = {}) => (store: any) => {
       case `${namespace}${UNDO}`:
         if (canUndo(paths)(namespace))
           await execUndo({ paths, store })(namespace);
+        break;
+      case `${namespace}${CLEAR}`:
+        await execClear({ paths, store })(namespace);
         break;
       default:
         break;

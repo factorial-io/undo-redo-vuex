@@ -3,6 +3,7 @@
     <button id="post" @click="$emit('postNewTodo')">Add</button>
     <button id="undo" :disabled="!canUndo" @click="$emit('undo')">Undo</button>
     <button id="redo" :disabled="!canRedo" @click="$emit('redo')">Redo</button>
+    <button id="clear" :disabled="!canUndo && !canRedo" @click="$emit('clear')">Clear undo/redo</button>
     <h4>{{ label }}</h4>
     <ol>
       <li v-for="(todo, i) in list" :key="i">{{ todo }}</li>
