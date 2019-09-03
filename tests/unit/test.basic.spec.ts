@@ -1,6 +1,6 @@
 import Vue from "vue";
 import store from "../store";
-import { undo, redo } from "./utils-test";
+import { undo, redo, clear } from "./utils-test";
 
 const item = {
   foo: "bar"
@@ -94,5 +94,37 @@ describe("Simple testing for undo/redo on a namespaced vuex store", () => {
     expect(state.list.list).toEqual(expectedState);
     // Check shadow: should contain no items
     expect(state.list.shadow).toEqual([]);
+  });
+
+  it('"clear" should return the state to an empty list', async () => {
+    await clear(store)("list");
+    const expectedState: [] = [];
+
+    expect(state.list.list).toEqual(expectedState);
+  });
+
+  it('"canUndo" and "canRedo" should be reset', () => {
+    expect(state.list.canUndo).toBeFalsy();
+    expect(state.list.canRedo).toBeFalsy();
+  });
+
+  it("Add item to list", () => {
+    const expectedState = [{ ...item }];
+
+    // Commit the item to the store and assert
+    store.commit("list/addItem", { item });
+
+    expect(state.list.list).toEqual(expectedState);
+  });
+
+  it("Check 'canUndo' value; The undo function should remove the item", async () => {
+    expect(state.list.canUndo).toBeTruthy();
+
+    await undo(store)("list");
+    await Vue.nextTick();
+
+    // Check 'canUndo' value, Assert list items after undo
+    expect(state.list.canUndo).toBeFalsy();
+    expect(state.list.list).toEqual([]);
   });
 });

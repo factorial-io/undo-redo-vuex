@@ -2,7 +2,7 @@
   <div>
     <template v-if="isAuthenticated">
       <input v-model="newTodo" type="text" @keyup.enter.prevent="postNewTodo">
-      <todos v-bind="todoData" @postNewTodo="postNewTodo" @undo="undo" @redo="redo"/>
+      <todos v-bind="todoData" @postNewTodo="postNewTodo" @undo="undo" @redo="redo" @clear="clear" />
     </template>
     <button @click="() => (isAuthenticated ? logout() : login())">
       {{ isAuthenticated ? 'Logout' : 'Login' }}
@@ -48,7 +48,7 @@ export default Vue.extend({
   },
   methods: {
     ...mapMutations("list", ["addItem"]),
-    ...mapActions("list", ["undo", "redo"]),
+    ...mapActions("list", ["undo", "redo", "clear"]),
     ...mapActions("auth", ["login", "logout"]),
     postNewTodo() {
       // @ts-ignore
