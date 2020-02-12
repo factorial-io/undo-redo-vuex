@@ -4,7 +4,7 @@
         <p>This basic example shows you how the Undo/Redo Vuex plugin works. Simply add your ToDo to the input field and
             hit the "Enter" key. You can then undo and redo those actions.</p>
         <form action="#">
-            <input v-model="newTodo" type="text" placeholder="Add todo" @keyup.enter.prevent="addTodo">
+            <input v-model="newTodo" type="text" placeholder="Add todo" @keydown.enter.prevent="addTodo">
             <button @click="undo" :disabled="!canUndo" type="button">Undo</button>
             <button @click="redo" :disabled="!canRedo" type="button">Redo</button>
         </form>
@@ -32,6 +32,7 @@
         },
         methods: {
             addTodo() {
+                if (!this.newTodo) return;
                 this.$store.commit('addTodo', this.newTodo);
                 this.newTodo = '';
             },
