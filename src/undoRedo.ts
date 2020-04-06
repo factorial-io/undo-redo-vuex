@@ -92,6 +92,12 @@ const canUndo = (paths: UndoRedoOptions[]) => (namespace: string) => {
   return false;
 };
 
+const getNamespace = (typeAttr: String) => {
+  let parts = typeAttr.split("/");
+  parts.pop();
+  return parts.join("/") + "/";
+};
+
 /**
  * The Undo-Redo plugin module
  *
@@ -117,9 +123,7 @@ export default (options: UndoRedoOptions = {}) => (store: any) => {
 
   store.subscribe((mutation: Mutation) => {
     const isStoreNamespaced = mutation.type.split("/").length > 1;
-    const namespace = isStoreNamespaced
-      ? `${mutation.type.split("/")[0]}/`
-      : "";
+    const namespace = isStoreNamespaced ? getNamespace(mutation.type) : "";
     const config = getConfig(paths)(namespace);
 
     if (Object.keys(config).length) {
@@ -145,7 +149,7 @@ export default (options: UndoRedoOptions = {}) => (store: any) => {
   // NB: Watch all actions to intercept the undo/redo NOOP actions
   store.subscribeAction(async (action: Action) => {
     const isStoreNamespaced = action.type.split("/").length > 1;
-    const namespace = isStoreNamespaced ? `${action.type.split("/")[0]}/` : "";
+    const namespace = isStoreNamespaced ? getNamespace(action.type) : "";
 
     switch (action.type) {
       case `${namespace}${REDO}`:
