@@ -85,7 +85,7 @@ export default ({
         mutation.type,
         Array.isArray(mutation.payload)
           ? [...mutation.payload]
-          : mutation.payload.constructor(mutation.payload)
+          : new mutation.payload.constructor(mutation.payload)
       );
 
       // Check if there is an undo callback action
