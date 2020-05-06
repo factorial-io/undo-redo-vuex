@@ -72,7 +72,7 @@ export default ({
     config.newMutation = false;
     // NB: The array of redoCallbacks and respective action payloads
     const redoCallbacks = commits
-      .filter((mutation: Mutation) => (mutation.type && mutation.payload))
+      .filter((mutation: Mutation) => mutation.type && mutation.payload)
       .map(async ({ type, payload }: Mutation) => {
         // NB: Commit each mutation in the redo stack
         store.commit(

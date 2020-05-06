@@ -81,7 +81,7 @@ export default ({
     config.newMutation = false;
     store.commit(`${namespace}${EMPTY_STATE}`);
     const redoCallbacks = done
-      .filter((mutation: Mutation) => (mutation.type && mutation.payload))
+      .filter((mutation: Mutation) => mutation.type && mutation.payload)
       .map(async (mutation: Mutation) => {
         store.commit(
           mutation.type,
