@@ -80,21 +80,23 @@ export default ({
     const undone = [...config.undone, ...commits];
     config.newMutation = false;
     store.commit(`${namespace}${EMPTY_STATE}`);
-    const redoCallbacks = done.map(async (mutation: Mutation) => {
-      store.commit(
-        mutation.type,
-        Array.isArray(mutation.payload)
-          ? [...mutation.payload]
-          : mutation.payload.constructor(mutation.payload)
-      );
+    const redoCallbacks = done
+      .filter((mutation: Mutation) => (mutation.type && mutation.payload))
+      .map(async (mutation: Mutation) => {
+        store.commit(
+          mutation.type,
+          Array.isArray(mutation.payload)
+            ? [...mutation.payload]
+            : mutation.payload.constructor(mutation.payload)
+        );
 
-      // Check if there is an undo callback action
-      const { redoCallback } = mutation.payload;
-      return {
-        action: redoCallback ? `${namespace}${redoCallback}` : "",
-        payload: mutation.payload
-      };
-    });
+        // Check if there is an undo callback action
+        const { redoCallback } = mutation.payload;
+        return {
+          action: redoCallback ? `${namespace}${redoCallback}` : "",
+          payload: mutation.payload
+        };
+      });
     await pipeActions(store)(await Promise.all(redoCallbacks));
     config.newMutation = true;
     setConfig(paths)(namespace, {
