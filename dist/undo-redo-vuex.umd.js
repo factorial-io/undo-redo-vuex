@@ -2540,7 +2540,9 @@ var execRedo = (function (_ref) {
                 }), undone = _config$undone$reduce.undone, commits = _config$undone$reduce.commits;
                 config.newMutation = false; // NB: The array of redoCallbacks and respective action payloads
 
-                redoCallbacks = commits.map(
+                redoCallbacks = commits.filter(function (mutation) {
+                  return mutation.type && mutation.payload;
+                }).map(
                 /*#__PURE__*/
                 function () {
                   var _ref5 = _asyncToGenerator(
@@ -2691,7 +2693,9 @@ var execUndo = (function (_ref) {
                 undone = [].concat(_toConsumableArray(config.undone), _toConsumableArray(commits));
                 config.newMutation = false;
                 store.commit("".concat(namespace).concat(EMPTY_STATE));
-                redoCallbacks = done.map(
+                redoCallbacks = done.filter(function (mutation) {
+                  return mutation.type && mutation.payload;
+                }).map(
                 /*#__PURE__*/
                 function () {
                   var _ref5 = _asyncToGenerator(
