@@ -23,7 +23,7 @@ const actions = {
 };
 const mutations = {
   /*
-   * NB: The emptyState mutation HAS to be impemented.
+   * NB: The emptyState mutation HAS to be implemented.
    * This mutation resets the state props to a "base" state,
    * on top of which subsequent mutations are "replayed"
    * whenever undo/redo is dispatched.
