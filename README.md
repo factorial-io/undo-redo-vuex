@@ -60,7 +60,7 @@ export default scaffoldStore({
   state,
   actions,
   mutations,
-  namespaced: true, // NB: do not include this is non-namespaced stores
+  namespaced: true, // NB: do not include this in non-namespaced stores
 });
 ```
 
@@ -88,7 +88,7 @@ export default {
   state: scaffoldState(state),
   actions: scaffoldActions(actions),
   mutations: scaffoldMutations(mutations),
-  namespaced: true, // NB: do not include this is non-namespaced stores
+  namespaced: true, // NB: do not include this in non-namespaced stores
 };
 ```
 
