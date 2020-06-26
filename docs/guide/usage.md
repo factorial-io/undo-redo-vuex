@@ -275,7 +275,7 @@ await this.$nextTick();
 
 ## Resetting the current state with the `reset` action
 
-Unlike the `clear` action, `reset` empties the `done` and `undone` stacks, but maintains the state of the store up to this particular point. This action is scaffolded when using `scaffoldActions(actions)` of `scaffoldStore(store)`. This enhancement is described further in [issue #137](https://github.com/factorial-io/undo-redo-vuex/issues/13), with accompanying [unit tests](https://github.com/factorial-io/undo-redo-vuex/tree/master/tests/unit/test.reset.spec.ts).
+Unlike the `clear` action, `reset` empties the `done` and `undone` stacks, but maintains the state of the store up to this particular point. This action is scaffolded when using `scaffoldActions(actions)` of `scaffoldStore(store)`. This enhancement is described further in [issue #13](https://github.com/factorial-io/undo-redo-vuex/issues/13), with accompanying [unit tests](https://github.com/factorial-io/undo-redo-vuex/tree/master/tests/unit/test.reset.spec.ts).
 
 ```js
 /**
