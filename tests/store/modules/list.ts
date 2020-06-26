@@ -7,7 +7,7 @@ const debug = process.env.NODE_ENV !== "production";
 const state = {
   list: [],
   shadow: [],
-  resetList: undefined
+  resetList: []
 };
 
 const getters = {
@@ -42,8 +42,7 @@ const actions = {
 
 export const mutations = {
   emptyState: (state: any) => {
-    const list = [...(state.resetList || [])];
-    state.list = list;
+    state.list = [...state.resetList];
   },
   resetState: (state: any) => {
     state.resetList = [...state.list];
