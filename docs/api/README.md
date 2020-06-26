@@ -22,6 +22,16 @@ and pushes it to the done stack
 The Undo function - pushes the latest done mutation to the top of the undone
 stack by popping the done stack and 'replays' all mutations in the done stack
 
+## undoRedo:clear()
+
+The Clear function - empties the done and undone stacks, and re-initializes 
+the store's state by executing the `emptyState` mutation
+
+## undoRedo:reset()
+
+The Reset function - empties the done and undone stacks, and resets the 
+store's initial state to the current by executing the `resetState` mutation 
+
 ## undoRedo:pipeActions(actions)
 
 Piping async action calls sequentially using Array.prototype.reduce
