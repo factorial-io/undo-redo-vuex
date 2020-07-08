@@ -12,6 +12,7 @@ const debug = process.env.NODE_ENV !== "production";
 interface State {
   list: Array<any>;
   shadow: Array<any>;
+  resetList?: Array<any>;
 }
 
 interface Payload {
@@ -29,7 +30,8 @@ interface Context {
 
 const state: State = {
   list: [],
-  shadow: []
+  shadow: [],
+  resetList: undefined
 };
 
 const getters = {
@@ -52,6 +54,9 @@ const actions = {
 const mutations = {
   emptyState: (state: State) => {
     state.list = [];
+  },
+  resetState: (state: State) => {
+    state.resetList = [...state.list];
   },
   addItem: (state: State, { item }: Payload) => {
     state.list = [...state.list, item];

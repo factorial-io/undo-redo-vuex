@@ -16,6 +16,11 @@ import { scaffoldStore } from "undo-redo-vuex";
 
 const state = {
   list: [],
+  /**
+   * 'resetList' is a placeholder (initially the same as 'list') to 
+   * fast-forward 'list' during a 'reset()'
+   */
+  resetList: [],
   // Define vuex state properties as normal
 };
 const actions = {
@@ -29,8 +34,13 @@ const mutations = {
    * whenever undo/redo is dispatched.
    */
   emptyState: state => {
-    // Sets some state prop to an initial value
-    state.list = [];
+    // Sets some state prop to the 'reset placeholder' value
+    state.list = [...state.resetList];
+  },
+
+  resetState: state => {
+    // Sets the 'reset placeholder' (see state.resetList) prop to the current state
+    state.resetList = [...state.list];
   },
 
   // Define vuex mutations as normal
@@ -44,6 +54,10 @@ export default scaffoldStore({
 });
 ```
 
+### Setting up `emptyState` and `resetState` mutations
+
+The undo and redo functionality requires the `emptyState` mutation (in the example above) to be defined by the developer. This mutation (which is not tracked in the undo and redo stacks) allows state to be 'replayed' in the chronological order mutations are executed. The `clear()` action also commits `emptyState` to re-initialize the store to its original state. The `reset()` action additionally requires the `resetState` mutation to be defined, allowing the state to 'fast-forward' to its point when `reset()` was called before other mutations are 'replayed'.
+
 Alternatively, the `scaffoldState`, `scaffoldActions`, and `scaffoldMutations` helper functions can be individually required to bootstrap the vuex store. This will expose `canUndo` and `canRedo` as vuex state properties which can be used to enable/disable UI controls (e.g. undo/redo buttons).
 
 ```js
@@ -54,12 +68,21 @@ import {
 } from "undo-redo-vuex";
 
 const state = {
+  list: [],
+  resetList: [],
   // Define vuex state properties as normal
 };
 const actions = {
   // Define vuex actions as normal
 };
 const mutations = {
+  emptyState: state => {
+    state.list = [...(state.resetList || [])];
+  },
+  resetState: state => {
+    // Sets the 'reset placeholder' (see state.resetList) prop to the current state
+    state.resetList = [...state.list];
+  },
   // Define vuex mutations as normal
 };
 
@@ -247,5 +270,24 @@ await this.$nextTick();
 /**
  * Current done stack: []
  * Current undone stack: []
+ **/
+```
+
+## Resetting the current state with the `reset` action
+
+Unlike the `clear` action, `reset` empties the `done` and `undone` stacks, but maintains the state of the store up to this particular point. This action is scaffolded when using `scaffoldActions(actions)` of `scaffoldStore(store)`. This enhancement is described further in [issue #13](https://github.com/factorial-io/undo-redo-vuex/issues/13), with accompanying [unit tests](https://github.com/factorial-io/undo-redo-vuex/tree/master/tests/unit/test.reset.spec.ts).
+
+```js
+/**
+ * Current done stack: [mutationA, mutation B]
+ * Current undone stack: [mutationC]
+ **/
+this.$store.dispatch("list/reset");
+
+await this.$nextTick();
+/**
+ * Current done stack: []
+ * Current undone stack: []
+ * state: resetState (i.e. initial state + mutationA + mutationB)
  **/
 ```
