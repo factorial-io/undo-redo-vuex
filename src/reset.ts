@@ -1,9 +1,5 @@
 import { RESET_STATE } from "./constants";
-import {
-  getConfig,
-  setConfig,
-  updateCanUndoRedo
-} from "./utils-undo-redo";
+import { getConfig, setConfig, updateCanUndoRedo } from "./utils-undo-redo";
 
 export default ({
   paths,
