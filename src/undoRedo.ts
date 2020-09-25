@@ -27,40 +27,44 @@ export const scaffoldState = (state: any, exposeUndoRedoConfig = false) => ({
   ...state,
   canUndo: false,
   canRedo: false,
-  ...(
-    exposeUndoRedoConfig
-      ? {
+  ...(exposeUndoRedoConfig
+    ? {
         undoRedoConfig: {}
       }
-      : {}
-  )
+    : {})
 });
 
-export const scaffoldActions = (actions: any, exposeUndoRedoConfig = false) => ({
+export const scaffoldActions = (
+  actions: any,
+  exposeUndoRedoConfig = false
+) => ({
   ...actions,
   undo,
   redo,
   clear,
   reset,
-  ...(
-    exposeUndoRedoConfig
-      ? {
+  ...(exposeUndoRedoConfig
+    ? {
         getUndoRedoConfig
       }
-      : {}
-  )
+    : {})
 });
 
-export const scaffoldMutations = (mutations: any, exposeUndoRedoConfig = false) => ({
+export const scaffoldMutations = (
+  mutations: any,
+  exposeUndoRedoConfig = false
+) => ({
   ...mutations,
   [UPDATE_CAN_UNDO_REDO]: (state: any, payload: any) => {
     if (payload.canUndo !== undefined) state.canUndo = payload.canUndo;
     if (payload.canRedo !== undefined) state.canRedo = payload.canRedo;
   },
-  [UPDATE_UNDO_REDO_CONFIG]: exposeUndoRedoConfig ? (state: any, { done, undone }: { done: any[]; undone: any[] }) => {
-    state.undoRedoConfig.done = [ ...done ];
-    state.undoRedoConfig.undone = [ ...undone ];
-  } : noop
+  [UPDATE_UNDO_REDO_CONFIG]: exposeUndoRedoConfig
+    ? (state: any, { done, undone }: { done: any[]; undone: any[] }) => {
+        state.undoRedoConfig.done = [...done];
+        state.undoRedoConfig.undone = [...undone];
+      }
+    : noop
 });
 
 export const scaffoldStore = (store: any, exposeUndoRedoConfig = false) => ({
@@ -155,7 +159,12 @@ export default (options: UndoRedoOptions = {}) => (store: any) => {
     const config = getConfig(paths)(namespace);
 
     if (Object.keys(config).length) {
-      const { ignoreMutations, newMutation, done, exposeUndoRedoConfig } = config;
+      const {
+        ignoreMutations,
+        newMutation,
+        done,
+        exposeUndoRedoConfig
+      } = config;
 
       if (
         mutation.type !== `${namespace}${EMPTY_STATE}` &&
