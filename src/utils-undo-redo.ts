@@ -1,4 +1,4 @@
-import { UPDATE_CAN_UNDO_REDO } from "./constants";
+import { UPDATE_CAN_UNDO_REDO, UPDATE_UNDO_REDO_CONFIG } from "./constants";
 
 /**
  * Piping async action calls secquentially using Array.prototype.reduce
@@ -66,10 +66,12 @@ const canUndo = (paths: UndoRedoOptions[]) => (namespace: string) => {
 
 export const updateCanUndoRedo = ({
   paths,
-  store
+  store,
+  exposeUndoRedoConfig = false
 }: {
   paths: UndoRedoOptions[];
   store: any;
+  exposeUndoRedoConfig?: boolean;
 }) => (namespace: string) => {
   const undoEnabled = canUndo(paths)(namespace);
   const redoEnabled = canRedo(paths)(namespace);
@@ -80,4 +82,10 @@ export const updateCanUndoRedo = ({
   store.commit(`${namespace}${UPDATE_CAN_UNDO_REDO}`, {
     canRedo: redoEnabled
   });
+
+  if (exposeUndoRedoConfig) {
+    const { done, undone } = getConfig(paths)(namespace);
+
+    store.commit(`${namespace}${UPDATE_UNDO_REDO_CONFIG}`, { done, undone });
+  }
 };
