@@ -14,7 +14,8 @@ export const store = {
       paths: [
         {
           namespace: "list",
-          ignoreMutations: ["addShadow", "removeShadow"]
+          ignoreMutations: ["addShadow", "removeShadow"],
+          exposeUndoRedoConfig: true
         }
       ]
     })
