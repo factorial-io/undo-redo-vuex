@@ -43,7 +43,7 @@ export const getExposedConfigStore = () => {
       auth
     },
     strict: false
-  })
+  });
 };
 
 export default new Vuex.Store({
