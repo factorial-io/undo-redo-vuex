@@ -45,7 +45,7 @@ export const setConfig = (paths: UndoRedoOptions[]) => {
   return (namespace: string, config: any, store: any = undefined) => {
     const pathIndex = paths.findIndex(path => path.namespace === namespace);
     paths.splice(pathIndex, 1, config);
-    
+
     const { exposeUndoRedoConfig } = config;
     if (exposeUndoRedoConfig) {
       store.commit(`${namespace}${UPDATE_UNDO_REDO_CONFIG}`, config);
