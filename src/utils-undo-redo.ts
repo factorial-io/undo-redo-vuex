@@ -42,9 +42,14 @@ export const pipeActions = (store: any) => (actions: Array<any>) =>
  * @param {Object} config - The object containing the updated undo/redo stacks of the store module
  */
 export const setConfig = (paths: UndoRedoOptions[]) => {
-  return (namespace: string, config: any) => {
+  return (namespace: string, config: any, store: any = undefined) => {
     const pathIndex = paths.findIndex(path => path.namespace === namespace);
     paths.splice(pathIndex, 1, config);
+    
+    const { exposeUndoRedoConfig } = config;
+    if (exposeUndoRedoConfig) {
+      store.commit(`${namespace}${UPDATE_UNDO_REDO_CONFIG}`, config);
+    }
   };
 };
 
@@ -66,12 +71,10 @@ const canUndo = (paths: UndoRedoOptions[]) => (namespace: string) => {
 
 export const updateCanUndoRedo = ({
   paths,
-  store,
-  exposeUndoRedoConfig = false
+  store
 }: {
   paths: UndoRedoOptions[];
   store: any;
-  exposeUndoRedoConfig?: boolean;
 }) => (namespace: string) => {
   const undoEnabled = canUndo(paths)(namespace);
   const redoEnabled = canRedo(paths)(namespace);
@@ -82,10 +85,4 @@ export const updateCanUndoRedo = ({
   store.commit(`${namespace}${UPDATE_CAN_UNDO_REDO}`, {
     canRedo: redoEnabled
   });
-
-  if (exposeUndoRedoConfig) {
-    const { done, undone } = getConfig(paths)(namespace);
-
-    store.commit(`${namespace}${UPDATE_UNDO_REDO_CONFIG}`, { done, undone });
-  }
 };

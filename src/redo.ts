@@ -94,7 +94,7 @@ export default ({
     setConfig(paths)(namespace, {
       ...config,
       undone
-    });
+    }, store);
 
     updateCanUndoRedo({ paths, store })(namespace);
   }

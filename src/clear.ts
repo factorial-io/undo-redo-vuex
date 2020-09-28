@@ -32,7 +32,7 @@ export default ({
       ...config,
       done,
       undone
-    });
+    }, store);
 
     updateCanUndoRedo({ paths, store })(namespace);
   }

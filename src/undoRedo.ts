@@ -175,11 +175,13 @@ export default (options: UndoRedoOptions = {}) => (store: any) => {
         newMutation
       ) {
         done.push(mutation);
+
         setConfig(paths)(namespace, {
           ...config,
           done
-        });
-        updateCanUndoRedo({ paths, store, exposeUndoRedoConfig })(namespace);
+        }, store);
+
+        updateCanUndoRedo({ paths, store })(namespace);
       }
     }
   });
