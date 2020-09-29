@@ -6,11 +6,12 @@ The Undo-Redo plugin module
 
 **Returns**: <code>function</code> - plugin - the plugin function which accepts the store parameter
 
-| Param                   | Type                              | Description                                                         |
-| ----------------------- | --------------------------------- | ------------------------------------------------------------------- |
-| options                 | <code>Object</code>               |                                                                     |
-| options.namespace       | <code>String</code>               | The named vuex store module                                         |
-| options.ignoreMutations | <code>Array.&lt;String&gt;</code> | The list of store mutations (belonging to the module) to be ignored |
+| Param                        | Type                              | Description                                                         |
+| ---------------------------- | --------------------------------- | ------------------------------------------------------------------- |
+| options                      | <code>Object</code>               |                                                                     |
+| options.namespace            | <code>String</code>               | The named vuex store module                                         |
+| options.ignoreMutations      | <code>Array.&lt;String&gt;</code> | The list of store mutations (belonging to the module) to be ignored |
+| options.exposeUndoRedoConfig | <code>Boolean</code>              | (Optional) Flag to expose the `done` and `undone` mutation stacks   |
 
 ## undoRedo:redo()
 
