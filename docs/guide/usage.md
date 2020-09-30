@@ -311,6 +311,12 @@ const storeConfig = scaffoldStore({
   mutations
 }, exposeUndoRedoConfig); // boolean flag as the second optional param
 
+/**
+ * NB: When configuring state, actions or mutations with scaffoldState,
+ * scaffoldActions or scaffoldMutations, the exposeUndoRedoConfig = true
+ * flag should be passed as the second param.
+ */ 
+
 const store = new Vuex.Store({
   ...storeConfig,
   plugins: [
