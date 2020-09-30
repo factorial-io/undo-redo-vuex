@@ -8,6 +8,12 @@ const item = {
   foo: "bar"
 };
 
+const getDoneUndone = () => {
+  const { done, undone } = state.undoRedoConfig;
+
+  return { done, undone };
+};
+
 describe("Testing undo/redo in a non-namespaced vuex store", () => {
   it("Add item to list and undo", async () => {
     const expectedState = [{ ...item }];
@@ -15,6 +21,17 @@ describe("Testing undo/redo in a non-namespaced vuex store", () => {
     // Commit the item to the store and assert
     store.commit("addItem", { item });
     expect(state.list).toEqual(expectedState);
+
+    const { done } = getDoneUndone();
+
+    expect(done).toEqual([
+      {
+        type: "addItem",
+        payload: {
+          item
+        }
+      }
+    ]);
   });
 
   it("Check 'canUndo' value; The undo function should remove the item", async () => {
@@ -25,6 +42,18 @@ describe("Testing undo/redo in a non-namespaced vuex store", () => {
     // Check 'canUndo' value, Assert list items after undo
     expect(state.canUndo).toBeFalsy();
     expect(state.list).toEqual([]);
+
+    const { done, undone } = getDoneUndone();
+
+    expect(undone).toEqual([
+      {
+        type: "addItem",
+        payload: {
+          item
+        }
+      }
+    ]);
+    expect(done).toEqual([]);
   });
 
   it("Redo 'addItem' commit", async () => {
@@ -33,6 +62,18 @@ describe("Testing undo/redo in a non-namespaced vuex store", () => {
     // Assert list items after redo
     const expectedState = [{ ...item }];
     expect(state.list).toEqual(expectedState);
+
+    const { done, undone } = getDoneUndone();
+
+    expect(done).toEqual([
+      {
+        type: "addItem",
+        payload: {
+          item
+        }
+      }
+    ]);
+    expect(undone).toEqual([]);
   });
 
   it("Grouped mutations: adding two items to the list", async () => {
@@ -44,6 +85,32 @@ describe("Testing undo/redo in a non-namespaced vuex store", () => {
     store.commit("addItem", { item, actionGroup });
     store.commit("addItem", { item: anotherItem, actionGroup });
     expect(state.list).toEqual(expectedState);
+
+    const { done, undone } = getDoneUndone();
+
+    expect(done).toEqual([
+      {
+        type: "addItem",
+        payload: {
+          item
+        }
+      },
+      {
+        type: "addItem",
+        payload: {
+          item,
+          actionGroup
+        }
+      },
+      {
+        type: "addItem",
+        payload: {
+          item: anotherItem,
+          actionGroup
+        }
+      }
+    ]);
+    expect(undone).toEqual([]);
 
     // The undo function should remove the item
     await undo(store)();

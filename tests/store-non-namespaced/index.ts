@@ -75,11 +75,14 @@ const mutations = {
   }
 };
 
+const exposeUndoRedoConfig = true;
+
 export default new Vuex.Store(
   scaffoldStore({
     plugins: [
       undoRedo({
-        ignoreMutations: ["addShadow", "removeShadow"]
+        ignoreMutations: ["addShadow", "removeShadow"],
+        exposeUndoRedoConfig
       })
     ],
     strict: debug,
@@ -87,5 +90,5 @@ export default new Vuex.Store(
     getters,
     actions,
     mutations
-  })
+  }, exposeUndoRedoConfig)
 );
