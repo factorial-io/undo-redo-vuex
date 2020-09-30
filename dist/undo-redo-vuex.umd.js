@@ -2412,10 +2412,16 @@ var pipeActions = function pipeActions(store) {
 
 var setConfig = function setConfig(paths) {
   return function (namespace, config) {
+    var store = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
     var pathIndex = paths.findIndex(function (path) {
       return path.namespace === namespace;
     });
     paths.splice(pathIndex, 1, config);
+    var exposeUndoRedoConfig = config.exposeUndoRedoConfig;
+
+    if (exposeUndoRedoConfig) {
+      store.commit("".concat(namespace).concat(UPDATE_UNDO_REDO_CONFIG), config);
+    }
   };
 };
 
@@ -2445,9 +2451,7 @@ var canUndo = function canUndo(paths) {
 
 var updateCanUndoRedo = function updateCanUndoRedo(_ref3) {
   var paths = _ref3.paths,
-      store = _ref3.store,
-      _ref3$exposeUndoRedoC = _ref3.exposeUndoRedoConfig,
-      exposeUndoRedoConfig = _ref3$exposeUndoRedoC === void 0 ? false : _ref3$exposeUndoRedoC;
+      store = _ref3.store;
   return function (namespace) {
     var undoEnabled = canUndo(paths)(namespace);
     var redoEnabled = canRedo(paths)(namespace);
@@ -2457,17 +2461,6 @@ var updateCanUndoRedo = function updateCanUndoRedo(_ref3) {
     store.commit("".concat(namespace).concat(UPDATE_CAN_UNDO_REDO), {
       canRedo: redoEnabled
     });
-
-    if (exposeUndoRedoConfig) {
-      var _getConfig = getConfig(paths)(namespace),
-          done = _getConfig.done,
-          undone = _getConfig.undone;
-
-      store.commit("".concat(namespace).concat(UPDATE_UNDO_REDO_CONFIG), {
-        done: done,
-        undone: undone
-      });
-    }
   };
 };var $at = _stringAt(true);
 
@@ -2606,7 +2599,7 @@ var execRedo = (function (_ref) {
                 config.newMutation = true;
                 setConfig(paths)(namespace, _objectSpread({}, config, {
                   undone: undone
-                }));
+                }), store);
                 updateCanUndoRedo({
                   paths: paths,
                   store: store
@@ -2756,7 +2749,7 @@ var execUndo = (function (_ref) {
                 setConfig(paths)(namespace, _objectSpread({}, config, {
                   done: done,
                   undone: undone
-                }));
+                }), store);
                 updateCanUndoRedo({
                   paths: paths,
                   store: store
@@ -2815,7 +2808,7 @@ var execUndo = (function (_ref) {
                 setConfig(paths)(namespace, _objectSpread({}, config, {
                   done: done,
                   undone: undone
-                }));
+                }), store);
                 updateCanUndoRedo({
                   paths: paths,
                   store: store
@@ -2859,7 +2852,7 @@ var execUndo = (function (_ref) {
                   setConfig(paths)(namespace, _objectSpread({}, config, {
                     done: done,
                     undone: undone
-                  }));
+                  }), store);
                   updateCanUndoRedo({
                     paths: paths,
                     store: store
@@ -3030,11 +3023,10 @@ var undoRedo = (function () {
           done.push(mutation);
           setConfig(paths)(namespace, _objectSpread({}, config, {
             done: done
-          }));
+          }), store);
           updateCanUndoRedo({
             paths: paths,
-            store: store,
-            exposeUndoRedoConfig: exposeUndoRedoConfig
+            store: store
           })(namespace);
         }
       }
