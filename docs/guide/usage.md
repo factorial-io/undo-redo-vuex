@@ -291,3 +291,45 @@ await this.$nextTick();
  * state: resetState (i.e. initial state + mutationA + mutationB)
  **/
 ```
+
+## Inspecting `done` and `undone` mutations
+
+Some vuex powered applications may require knowledge of the `done` and `undone` stacks, e.g. to preserve undo/redo functionality between page loads. The following configuration exposes the stacks by scaffoling a `undoRedoConfig` object in the store or module which uses the plugin:
+
+```js
+import Vuex from "vuex";
+import undoRedo, { scaffoldStore } from "undo-redo-vuex";
+
+// state, getters, actions & mutations ...
+
+// boolean flag to expose done and undone stacks
+const exposeUndoRedoConfig = true;
+
+const storeConfig = scaffoldStore({
+  state,
+  actions,
+  mutations
+}, exposeUndoRedoConfig); // boolean flag as the second optional param
+
+/**
+ * NB: When configuring state, actions or mutations with scaffoldState,
+ * scaffoldActions or scaffoldMutations, the exposeUndoRedoConfig = true
+ * flag should be passed as the second param.
+ */ 
+
+const store = new Vuex.Store({
+  ...storeConfig,
+  plugins: [
+    // Pass boolean flag as an named option
+    undoRedo({ exposeUndoRedoConfig })
+  ]
+});
+```
+
+To access the exposed `done` and `undone` stacks, e.g. in a component:
+
+```js
+const { done, undone } = this.$store.state;
+```
+
+This enhancement is described further in [issue #45](https://github.com/factorial-io/undo-redo-vuex/issues/45), with accompanying [unit tests](https://github.com/factorial-io/undo-redo-vuex/tree/master/tests/unit/test.expose-undo-redo-stacks.spec.ts).

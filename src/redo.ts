@@ -91,10 +91,14 @@ export default ({
     await pipeActions(store)(await Promise.all(redoCallbacks));
     config.done = [...config.done, ...commits];
     config.newMutation = true;
-    setConfig(paths)(namespace, {
-      ...config,
-      undone
-    });
+    setConfig(paths)(
+      namespace,
+      {
+        ...config,
+        undone
+      },
+      store
+    );
 
     updateCanUndoRedo({ paths, store })(namespace);
   }

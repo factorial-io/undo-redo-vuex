@@ -1,4 +1,4 @@
-import { UPDATE_CAN_UNDO_REDO } from "./constants";
+import { UPDATE_CAN_UNDO_REDO, UPDATE_UNDO_REDO_CONFIG } from "./constants";
 
 /**
  * Piping async action calls secquentially using Array.prototype.reduce
@@ -42,9 +42,14 @@ export const pipeActions = (store: any) => (actions: Array<any>) =>
  * @param {Object} config - The object containing the updated undo/redo stacks of the store module
  */
 export const setConfig = (paths: UndoRedoOptions[]) => {
-  return (namespace: string, config: any) => {
+  return (namespace: string, config: any, store: any = undefined) => {
     const pathIndex = paths.findIndex(path => path.namespace === namespace);
     paths.splice(pathIndex, 1, config);
+
+    const { exposeUndoRedoConfig } = config;
+    if (exposeUndoRedoConfig) {
+      store.commit(`${namespace}${UPDATE_UNDO_REDO_CONFIG}`, config);
+    }
   };
 };
 

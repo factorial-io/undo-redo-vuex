@@ -18,11 +18,15 @@ export default ({
 
     config.newMutation = true;
 
-    setConfig(paths)(namespace, {
-      ...config,
-      done,
-      undone
-    });
+    setConfig(paths)(
+      namespace,
+      {
+        ...config,
+        done,
+        undone
+      },
+      store
+    );
 
     updateCanUndoRedo({ paths, store })(namespace);
   }

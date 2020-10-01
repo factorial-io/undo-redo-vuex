@@ -5,6 +5,7 @@ declare interface UndoRedoOptions {
   newMutation?: boolean;
   done?: Array<Mutation> | [];
   undone?: Array<Mutation> | [];
+  exposeUndoRedoConfig?: boolean;
 }
 
 declare interface Mutation {

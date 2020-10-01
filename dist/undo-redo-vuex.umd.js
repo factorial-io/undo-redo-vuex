@@ -1719,7 +1719,8 @@ var UPDATE_CAN_UNDO_REDO = "updateCanUndoRedo";
 var REDO = "redo";
 var UNDO = "undo";
 var CLEAR = "clear";
-var RESET = "reset";// 7.2.2 IsArray(argument)
+var RESET = "reset";
+var UPDATE_UNDO_REDO_CONFIG = "updateUndoRedoConfig";// 7.2.2 IsArray(argument)
 
 var _isArray = Array.isArray || function isArray(arg) {
   return _cof(arg) == 'Array';
@@ -2411,10 +2412,16 @@ var pipeActions = function pipeActions(store) {
 
 var setConfig = function setConfig(paths) {
   return function (namespace, config) {
+    var store = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
     var pathIndex = paths.findIndex(function (path) {
       return path.namespace === namespace;
     });
     paths.splice(pathIndex, 1, config);
+    var exposeUndoRedoConfig = config.exposeUndoRedoConfig;
+
+    if (exposeUndoRedoConfig) {
+      store.commit("".concat(namespace).concat(UPDATE_UNDO_REDO_CONFIG), config);
+    }
   };
 };
 
@@ -2592,7 +2599,7 @@ var execRedo = (function (_ref) {
                 config.newMutation = true;
                 setConfig(paths)(namespace, _objectSpread({}, config, {
                   undone: undone
-                }));
+                }), store);
                 updateCanUndoRedo({
                   paths: paths,
                   store: store
@@ -2742,7 +2749,7 @@ var execUndo = (function (_ref) {
                 setConfig(paths)(namespace, _objectSpread({}, config, {
                   done: done,
                   undone: undone
-                }));
+                }), store);
                 updateCanUndoRedo({
                   paths: paths,
                   store: store
@@ -2801,7 +2808,7 @@ var execUndo = (function (_ref) {
                 setConfig(paths)(namespace, _objectSpread({}, config, {
                   done: done,
                   undone: undone
-                }));
+                }), store);
                 updateCanUndoRedo({
                   paths: paths,
                   store: store
@@ -2845,7 +2852,7 @@ var execUndo = (function (_ref) {
                   setConfig(paths)(namespace, _objectSpread({}, config, {
                     done: done,
                     undone: undone
-                  }));
+                  }), store);
                   updateCanUndoRedo({
                     paths: paths,
                     store: store
@@ -2871,70 +2878,90 @@ var undo = noop;
 var redo = noop;
 var clear = noop;
 var reset = noop;
+var getUndoRedoConfig = noop;
 var scaffoldState = function scaffoldState(state) {
+  var exposeUndoRedoConfig = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
   return _objectSpread({}, state, {
     canUndo: false,
     canRedo: false
-  });
+  }, exposeUndoRedoConfig ? {
+    undoRedoConfig: {}
+  } : {});
 };
 var scaffoldActions = function scaffoldActions(actions) {
+  var exposeUndoRedoConfig = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
   return _objectSpread({}, actions, {
     undo: undo,
     redo: redo,
     clear: clear,
     reset: reset
-  });
+  }, exposeUndoRedoConfig ? {
+    getUndoRedoConfig: getUndoRedoConfig
+  } : {});
 };
 var scaffoldMutations = function scaffoldMutations(mutations) {
-  return _objectSpread({}, mutations, {
-    updateCanUndoRedo: function updateCanUndoRedo(state, payload) {
-      if (payload.canUndo !== undefined) state.canUndo = payload.canUndo;
-      if (payload.canRedo !== undefined) state.canRedo = payload.canRedo;
-    }
-  });
+  var _objectSpread2;
+
+  var exposeUndoRedoConfig = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  return _objectSpread({}, mutations, (_objectSpread2 = {}, _defineProperty(_objectSpread2, UPDATE_CAN_UNDO_REDO, function (state, payload) {
+    if (payload.canUndo !== undefined) state.canUndo = payload.canUndo;
+    if (payload.canRedo !== undefined) state.canRedo = payload.canRedo;
+  }), _defineProperty(_objectSpread2, UPDATE_UNDO_REDO_CONFIG, exposeUndoRedoConfig ? function (state, _ref) {
+    var done = _ref.done,
+        undone = _ref.undone;
+    state.undoRedoConfig.done = _toConsumableArray(done);
+    state.undoRedoConfig.undone = _toConsumableArray(undone);
+  } : noop), _objectSpread2));
 };
 var scaffoldStore = function scaffoldStore(store) {
+  var exposeUndoRedoConfig = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
   return _objectSpread({}, store, {
-    state: scaffoldState(store.state || {}),
-    actions: scaffoldActions(store.actions || {}),
-    mutations: scaffoldMutations(store.mutations || {})
+    state: scaffoldState(store.state || {}, exposeUndoRedoConfig),
+    actions: scaffoldActions(store.actions || {}, exposeUndoRedoConfig),
+    mutations: scaffoldMutations(store.mutations || {}, exposeUndoRedoConfig)
   });
 };
 
-var createPathConfig = function createPathConfig(_ref) {
-  var _ref$namespace = _ref.namespace,
-      namespace = _ref$namespace === void 0 ? "" : _ref$namespace,
-      _ref$ignoreMutations = _ref.ignoreMutations,
-      ignoreMutations = _ref$ignoreMutations === void 0 ? [] : _ref$ignoreMutations;
+var createPathConfig = function createPathConfig(_ref2) {
+  var _ref2$namespace = _ref2.namespace,
+      namespace = _ref2$namespace === void 0 ? "" : _ref2$namespace,
+      _ref2$ignoreMutations = _ref2.ignoreMutations,
+      ignoreMutations = _ref2$ignoreMutations === void 0 ? [] : _ref2$ignoreMutations,
+      _ref2$exposeUndoRedoC = _ref2.exposeUndoRedoConfig,
+      exposeUndoRedoConfig = _ref2$exposeUndoRedoC === void 0 ? false : _ref2$exposeUndoRedoC;
   return {
     namespace: namespace,
     ignoreMutations: ignoreMutations,
     done: [],
     undone: [],
-    newMutation: true
+    newMutation: true,
+    exposeUndoRedoConfig: exposeUndoRedoConfig
   };
 };
 
-var mapIgnoreMutations = function mapIgnoreMutations(_ref2) {
-  var namespace = _ref2.namespace,
-      ignoreMutations = _ref2.ignoreMutations;
+var mapIgnoreMutations = function mapIgnoreMutations(_ref3) {
+  var namespace = _ref3.namespace,
+      ignoreMutations = _ref3.ignoreMutations;
   return {
     ignoreMutations: (ignoreMutations || []).map(function (mutation) {
       return "".concat(namespace, "/").concat(mutation);
-    }).concat("".concat(namespace, "/").concat(UPDATE_CAN_UNDO_REDO))
+    }).concat(["".concat(namespace, "/").concat(UPDATE_CAN_UNDO_REDO), "".concat(namespace, "/").concat(UPDATE_UNDO_REDO_CONFIG)])
   };
 };
 
 var mapPaths = function mapPaths(paths) {
-  return paths.map(function (_ref3) {
-    var namespace = _ref3.namespace,
-        ignoreMutations = _ref3.ignoreMutations;
+  return paths.map(function (_ref4) {
+    var namespace = _ref4.namespace,
+        ignoreMutations = _ref4.ignoreMutations,
+        exposeUndoRedoConfig = _ref4.exposeUndoRedoConfig;
     return createPathConfig(_objectSpread({
       namespace: "".concat(namespace, "/")
     }, ignoreMutations ? mapIgnoreMutations({
       namespace: namespace,
       ignoreMutations: ignoreMutations
-    }) : {}));
+    }) : {}, {
+      exposeUndoRedoConfig: exposeUndoRedoConfig
+    }));
   });
 };
 
@@ -2978,7 +3005,8 @@ var undoRedo = (function () {
   var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   return function (store) {
     var paths = options.paths ? mapPaths(options.paths) : [createPathConfig({
-      ignoreMutations: [].concat(_toConsumableArray(options.ignoreMutations || []), [UPDATE_CAN_UNDO_REDO])
+      ignoreMutations: [].concat(_toConsumableArray(options.ignoreMutations || []), [UPDATE_CAN_UNDO_REDO, UPDATE_UNDO_REDO_CONFIG]),
+      exposeUndoRedoConfig: options.exposeUndoRedoConfig
     })];
     store.subscribe(function (mutation) {
       var isStoreNamespaced = mutation.type.split("/").length > 1;
@@ -2988,13 +3016,14 @@ var undoRedo = (function () {
       if (Object.keys(config).length) {
         var ignoreMutations = config.ignoreMutations,
             newMutation = config.newMutation,
-            done = config.done;
+            done = config.done,
+            exposeUndoRedoConfig = config.exposeUndoRedoConfig;
 
-        if (mutation.type !== "".concat(namespace).concat(EMPTY_STATE) && mutation.type !== "".concat(namespace).concat(UPDATE_CAN_UNDO_REDO) && ignoreMutations.indexOf(mutation.type) === -1 && mutation.type.includes(namespace) && newMutation) {
+        if (mutation.type !== "".concat(namespace).concat(EMPTY_STATE) && mutation.type !== "".concat(namespace).concat(UPDATE_CAN_UNDO_REDO) && mutation.type !== "".concat(namespace).concat(UPDATE_UNDO_REDO_CONFIG) && ignoreMutations.indexOf(mutation.type) === -1 && mutation.type.includes(namespace) && newMutation) {
           done.push(mutation);
           setConfig(paths)(namespace, _objectSpread({}, config, {
             done: done
-          }));
+          }), store);
           updateCanUndoRedo({
             paths: paths,
             store: store
@@ -3006,7 +3035,7 @@ var undoRedo = (function () {
     store.subscribeAction(
     /*#__PURE__*/
     function () {
-      var _ref4 = _asyncToGenerator(
+      var _ref5 = _asyncToGenerator(
       /*#__PURE__*/
       regeneratorRuntime.mark(function _callee(action) {
         var isStoreNamespaced, namespace;
@@ -3082,8 +3111,8 @@ var undoRedo = (function () {
       }));
 
       return function (_x) {
-        return _ref4.apply(this, arguments);
+        return _ref5.apply(this, arguments);
       };
     }());
   };
-});exports.clear=clear;exports.default=undoRedo;exports.redo=redo;exports.reset=reset;exports.scaffoldActions=scaffoldActions;exports.scaffoldMutations=scaffoldMutations;exports.scaffoldState=scaffoldState;exports.scaffoldStore=scaffoldStore;exports.undo=undo;Object.defineProperty(exports,'__esModule',{value:true});}));
+});exports.clear=clear;exports.default=undoRedo;exports.getUndoRedoConfig=getUndoRedoConfig;exports.redo=redo;exports.reset=reset;exports.scaffoldActions=scaffoldActions;exports.scaffoldMutations=scaffoldMutations;exports.scaffoldState=scaffoldState;exports.scaffoldStore=scaffoldStore;exports.undo=undo;Object.defineProperty(exports,'__esModule',{value:true});}));

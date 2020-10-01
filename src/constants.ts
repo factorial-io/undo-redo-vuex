@@ -5,3 +5,4 @@ export const REDO = "redo";
 export const UNDO = "undo";
 export const CLEAR = "clear";
 export const RESET = "reset";
+export const UPDATE_UNDO_REDO_CONFIG = "updateUndoRedoConfig";

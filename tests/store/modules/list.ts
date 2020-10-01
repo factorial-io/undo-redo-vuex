@@ -64,11 +64,14 @@ export const mutations = {
   }
 };
 
-export default scaffoldStore({
-  state,
-  getters,
-  actions,
-  mutations,
-  namespaced: true,
-  debug
-});
+export default scaffoldStore(
+  {
+    state,
+    getters,
+    actions,
+    mutations,
+    namespaced: true,
+    debug
+  },
+  true
+);
