@@ -31,16 +31,13 @@ export const scaffoldState = (state: any, exposeUndoRedoConfig = false) => {
   };
 
   if (exposeUndoRedoConfig) {
-    result.undoRedoConfig = {}
+    result.undoRedoConfig = {};
   }
 
   return result;
 };
 
-export const scaffoldActions = (
-  actions: any,
-  exposeUndoRedoConfig = false
-) => {
+export const scaffoldActions = (actions: any, exposeUndoRedoConfig = false) => {
   const result = {
     ...actions,
     undo,
@@ -70,7 +67,10 @@ export const scaffoldMutations = (
   };
 
   if (exposeUndoRedoConfig) {
-    result[UPDATE_UNDO_REDO_CONFIG] = (state: any, { done, undone }: { done: any[]; undone: any[] }) => {
+    result[UPDATE_UNDO_REDO_CONFIG] = (
+      state: any,
+      { done, undone }: { done: any[]; undone: any[] }
+    ) => {
       state.undoRedoConfig.done = done.slice();
       state.undoRedoConfig.undone = undone.slice();
     };
@@ -152,29 +152,25 @@ const subscribeToMutations = ({
   paths,
   store
 }: {
-  paths: UndoRedoOptions[],
-  store: any
+  paths: UndoRedoOptions[];
+  store: any;
 }) => (mutation: Mutation) => {
   const isStoreNamespaced = mutation.type.split("/").length > 1;
-  const namespace = isStoreNamespaced
-    ? `${mutation.type.split("/")[0]}/`
-    : "";
+  const namespace = isStoreNamespaced ? `${mutation.type.split("/")[0]}/` : "";
   const config = getConfig(paths)(namespace);
   const hasConfig = Object.keys(config).length;
 
   if (hasConfig) {
-    const {
-      ignoreMutations,
-      newMutation,
-      done
-    } = config;
+    const { ignoreMutations, newMutation, done } = config;
 
     // Check mutation type
     const isEmptyStateMutation = mutation.type === `${namespace}${EMPTY_STATE}`;
-    const isUpdateCanUndoRedoMutation = mutation.type === `${namespace}${UPDATE_CAN_UNDO_REDO}`;
-    const isUpdateUndoRedoConfig = mutation.type === `${namespace}${UPDATE_UNDO_REDO_CONFIG}`;
+    const isUpdateCanUndoRedoMutation =
+      mutation.type === `${namespace}${UPDATE_CAN_UNDO_REDO}`;
+    const isUpdateUndoRedoConfig =
+      mutation.type === `${namespace}${UPDATE_UNDO_REDO_CONFIG}`;
     const isIgnoredMutations = ignoreMutations.indexOf(mutation.type) > -1;
-    
+
     const isUserMutation = ![
       isEmptyStateMutation,
       isUpdateCanUndoRedoMutation,
@@ -199,7 +195,7 @@ const subscribeToMutations = ({
       updateCanUndoRedo({ paths, store })(namespace);
     }
   }
-}
+};
 
 /**
  * The Undo-Redo plugin module
@@ -214,27 +210,24 @@ const subscribeToMutations = ({
  */
 export default (options: UndoRedoOptions = {}) => (store: any) => {
   const pathConfig = {
-    ignoreMutations: [
-      UPDATE_CAN_UNDO_REDO,
-      UPDATE_UNDO_REDO_CONFIG
-    ],
+    ignoreMutations: [UPDATE_CAN_UNDO_REDO, UPDATE_UNDO_REDO_CONFIG],
     exposeUndoRedoConfig: options.exposeUndoRedoConfig
   };
 
   if (options.ignoreMutations) {
     pathConfig.ignoreMutations.concat(options.ignoreMutations);
   }
-  
+
   const paths = options.paths
     ? mapPaths(options.paths)
-    : [
-        createPathConfig(pathConfig)
-      ];
+    : [createPathConfig(pathConfig)];
 
-  store.subscribe(subscribeToMutations({
-    paths,
-    store
-  }));
+  store.subscribe(
+    subscribeToMutations({
+      paths,
+      store
+    })
+  );
 
   // NB: Watch all actions to intercept the undo/redo NOOP actions
   store.subscribeAction(async (action: Action) => {
