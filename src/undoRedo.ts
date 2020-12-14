@@ -1,5 +1,8 @@
 /* eslint-disable no-param-reassign, no-shadow */
-import { UPDATE_CAN_UNDO_REDO, UPDATE_UNDO_REDO_CONFIG } from "./core/constants";
+import {
+  UPDATE_CAN_UNDO_REDO,
+  UPDATE_UNDO_REDO_CONFIG
+} from "./core/constants";
 import { subscribeToMutations, subscribeToActions } from "./subscriptions";
 
 // Logic based on: https://github.com/anthonygore/vuex-undo-redo
