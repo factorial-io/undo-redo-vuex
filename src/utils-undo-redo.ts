@@ -86,3 +86,5 @@ export const updateCanUndoRedo = ({
     canRedo: redoEnabled
   });
 };
+
+export const noop = () => {};
