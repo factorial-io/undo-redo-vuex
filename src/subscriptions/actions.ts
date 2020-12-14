@@ -1,9 +1,4 @@
-import {
-  REDO,
-  UNDO,
-  CLEAR,
-  RESET
-} from "../constants";
+import { REDO, UNDO, CLEAR, RESET } from "../constants";
 import execRedo from "../redo";
 import execUndo from "../undo";
 import execClear from "../clear";
@@ -35,7 +30,9 @@ export const subscribeToActions = ({
 }) => async (action: Action) => {
   const isStoreNamespaced = action.type.split("/").length > 1;
   const namespace = isStoreNamespaced ? `${action.type.split("/")[0]}/` : "";
-  const matchNamespace = action.type.match(new RegExp(String.raw`${namespace}`, "g"));
+  const matchNamespace = action.type.match(
+    new RegExp(String.raw`${namespace}`, "g")
+  );
 
   const execMap = {
     [String(REDO)]: canRedo(paths)(namespace) ? execRedo : undefined,
@@ -44,7 +41,10 @@ export const subscribeToActions = ({
     [String(RESET)]: execReset
   };
 
-  const actionPattern = new RegExp(String.raw`(${REDO}|${UNDO}|${CLEAR}|${RESET})`, "g");
+  const actionPattern = new RegExp(
+    String.raw`(${REDO}|${UNDO}|${CLEAR}|${RESET})`,
+    "g"
+  );
   const pluginAction = action.type.match(actionPattern);
 
   if (matchNamespace && pluginAction) {
