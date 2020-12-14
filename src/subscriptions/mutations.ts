@@ -2,8 +2,8 @@ import {
   EMPTY_STATE,
   UPDATE_CAN_UNDO_REDO,
   UPDATE_UNDO_REDO_CONFIG
-} from "../constants";
-import { getConfig, setConfig, updateCanUndoRedo } from "../utils-undo-redo";
+} from "../core/constants";
+import { getConfig, setConfig, updateCanUndoRedo } from "../core/utils-undo-redo";
 
 export const subscribeToMutations = ({
   paths,

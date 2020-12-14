@@ -1,9 +1,9 @@
-import { REDO, UNDO, CLEAR, RESET } from "../constants";
-import execRedo from "../redo";
-import execUndo from "../undo";
-import execClear from "../clear";
-import execReset from "../reset";
-import { getConfig } from "../utils-undo-redo";
+import { REDO, UNDO, CLEAR, RESET } from "../core/constants";
+import execRedo from "../core/redo";
+import execUndo from "../core/undo";
+import execClear from "../core/clear";
+import execReset from "../core/reset";
+import { getConfig } from "../core/utils-undo-redo";
 
 const canRedo = (paths: UndoRedoOptions[]) => (namespace: string) => {
   const config = getConfig(paths)(namespace);

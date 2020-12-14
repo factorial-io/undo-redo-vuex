@@ -1,5 +1,5 @@
-import { UPDATE_CAN_UNDO_REDO, UPDATE_UNDO_REDO_CONFIG } from "../constants";
-import { noop } from "../utils-undo-redo";
+import { UPDATE_CAN_UNDO_REDO, UPDATE_UNDO_REDO_CONFIG } from "../core/constants";
+import { noop } from "../core/utils-undo-redo";
 
 export const scaffoldMutations = (
   mutations: any,

@@ -1,4 +1,4 @@
-import { noop } from "../utils-undo-redo";
+import { noop } from "../core/utils-undo-redo";
 
 export const undo = noop;
 export const redo = noop;
