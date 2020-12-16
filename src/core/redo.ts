@@ -71,20 +71,21 @@ export default ({
 
     config.newMutation = false;
     // NB: The array of redoCallbacks and respective action payloads
-    const redoCallbacks = commits
-      .reduce((result: Mutation[], { type, payload }: Mutation) => {
+    const redoCallbacks = commits.reduce(
+      (result: Mutation[], { type, payload }: Mutation) => {
         if (type && payload) {
           // NB: Commit each mutation in the redo stack
           store.commit(
             type,
             Array.isArray(payload) ? [...payload] : payload.constructor(payload)
           );
-  
+
           // Check if there is an redo callback action
           const { redoCallback } = payload;
           // NB: The object containing the redoCallback action and payload
           return [
-            ...result, {
+            ...result,
+            {
               action: redoCallback ? `${namespace}${redoCallback}` : "",
               payload
             }
@@ -92,7 +93,9 @@ export default ({
         }
 
         return result;
-      }, []);
+      },
+      []
+    );
 
     await pipeActions(store)(await Promise.all(redoCallbacks));
 

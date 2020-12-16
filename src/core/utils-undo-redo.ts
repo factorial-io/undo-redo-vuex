@@ -24,17 +24,13 @@ export const getConfig: UndoRedoOptions | any = (paths: UndoRedoOptions[]) => (
  * action's name and payload
  */
 export const pipeActions = (store: any) => (actions: Array<any>) =>
-  actions
-    .reduce(
-      (promise, { action, payload }) => {
-        if (!!action) {
-          return promise.then(() => store.dispatch(action, payload));
-        }
+  actions.reduce((promise, { action, payload }) => {
+    if (action) {
+      return promise.then(() => store.dispatch(action, payload));
+    }
 
-        return promise;
-      },
-      Promise.resolve()
-    );
+    return promise;
+  }, Promise.resolve());
 
 /**
  * Piping async action calls secquentially using Array.prototype.reduce
