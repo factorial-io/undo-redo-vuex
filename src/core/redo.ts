@@ -72,25 +72,33 @@ export default ({
     config.newMutation = false;
     // NB: The array of redoCallbacks and respective action payloads
     const redoCallbacks = commits
-      .filter((mutation: Mutation) => mutation.type && mutation.payload)
-      .map(async ({ type, payload }: Mutation) => {
-        // NB: Commit each mutation in the redo stack
-        store.commit(
-          type,
-          Array.isArray(payload) ? [...payload] : payload.constructor(payload)
-        );
+      .reduce((result: Mutation[], { type, payload }: Mutation) => {
+        if (type && payload) {
+          // NB: Commit each mutation in the redo stack
+          store.commit(
+            type,
+            Array.isArray(payload) ? [...payload] : payload.constructor(payload)
+          );
+  
+          // Check if there is an redo callback action
+          const { redoCallback } = payload;
+          // NB: The object containing the redoCallback action and payload
+          return [
+            ...result, {
+              action: redoCallback ? `${namespace}${redoCallback}` : "",
+              payload
+            }
+          ];
+        }
 
-        // Check if there is an redo callback action
-        const { redoCallback } = payload;
-        // NB: The object containing the redoCallback action and payload
-        return {
-          action: redoCallback ? `${namespace}${redoCallback}` : "",
-          payload
-        };
-      });
+        return result;
+      }, []);
+
     await pipeActions(store)(await Promise.all(redoCallbacks));
+
     config.done = [...config.done, ...commits];
     config.newMutation = true;
+
     setConfig(paths)(
       namespace,
       {

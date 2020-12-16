@@ -2,7 +2,7 @@ import { UPDATE_CAN_UNDO_REDO, UPDATE_UNDO_REDO_CONFIG } from "./constants";
 
 /**
  * Piping async action calls secquentially using Array.prototype.reduce
- * to chain and initial, empty promise
+ * to chain an initial, empty promise
  *
  * @module store/plugins/undoRedo:getConfig
  * @function
@@ -25,10 +25,14 @@ export const getConfig: UndoRedoOptions | any = (paths: UndoRedoOptions[]) => (
  */
 export const pipeActions = (store: any) => (actions: Array<any>) =>
   actions
-    .filter(({ action }) => !!action)
     .reduce(
-      (promise, { action, payload }) =>
-        promise.then(() => store.dispatch(action, payload)),
+      (promise, { action, payload }) => {
+        if (!!action) {
+          return promise.then(() => store.dispatch(action, payload));
+        }
+
+        return promise;
+      },
       Promise.resolve()
     );
 
